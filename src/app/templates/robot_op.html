@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+
+<div class="row" >
+	<div class="col-sm-9 visual visual-bg" style="margin-top: 22px;">
+		{% block page_content %}{% endblock %}
+	</div>
+
+	<div class="col-sm-3 divCenter" style="background-color: rgba(79, 148, 250, 0.527);">
+		<br>
+		<div class="row">
+			<input id="idmanautoToggle" type="checkbox" data-toggle="toggle" data-on="MANUAL" data-off="AUTO" 
+				data-size="large" data-onstyle="danger" data-offstyle="warning" data-style="android"
+				data-width="200" data-height="100" checked>
+		</div>
+
+		<div class="table-responsive">
+			<table class="table table-bordered">
+			  <tr id="idrobotStatus">
+				  <td class="available" data-toggle="tooltip" data-placement="top" title="localization">L</td>
+				  <td class="unavailable" data-toggle="tooltip" data-placement="top" title="connectivity">C</td>
+				  <td data-toggle="tooltip" data-placement="top" title="manual/auto">M/A</td>
+				  <td data-toggle="tooltip" data-placement="top" title="hardware">H</td>
+				  <td data-toggle="tooltip" data-placement="top" title="heartbeat">Hb</td>
+			  </tr>
+			</table>
+		</div>
+
+		<input id="idsensorToggle" type="checkbox" data-toggle="toggle" data-on="Display Sensors" data-off="Hide Sensors" 
+				data-size="large" data-onstyle="success" data-offstyle="default" data-style="android quick" checked>
+
+		<div id="idsensorStatusDiv" class="table-responsive">
+			<table class="table table-bordered">
+			  <tr id="idsensorStatus">
+				  <td data-toggle="tooltip" data-placement="top" title="rear ir sensor">rs</td>
+				  <td data-toggle="tooltip" data-placement="top" title="front ir sensors">fs</td>
+				  <td data-toggle="tooltip" data-placement="top" title="ros websocket">wb</td>
+				  <td data-toggle="tooltip" data-placement="top" title="camera">c</td>
+				  <td data-toggle="tooltip" data-placement="top" title="lidar">li</td>
+				  <td data-toggle="tooltip" data-placement="top" title="imu">imu</td>
+				  <td data-toggle="tooltip" data-placement="top" title="left-motor">lm</td>
+				  <td data-toggle="tooltip" data-placement="top" title="right motor">rm</td>
+			  </tr>
+			</table>
+		</div>
+
+		<div id="idctrlDiv">
+			<div id="zone_joystick" style="position: relative;"></div>
+			<div id="idchartDiv">
+				<canvas id="myChart">Your browser does not support the canvas element.</canvas>
+			</div>
+			<a id="idtoggleStatus" class="btn btn-lg btn-warning">System Status</a>
+		</div>
+	</div>
+
+	<!-- MAN/AUTO Modal -->
+	<div id="idautomodeModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<!--button type="button" class="close" data-dismiss="modal">&times;</button-->
+				<h4 class="modal-title"> OPERATIOR CAUTION !!</h4>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to switch robot to AUTOMATIC mode?</p>
+			</div>
+			<div class="modal-footer">
+				<button id="idbtnYesAutomode" type="button" class="btn btn-danger" data-dismiss="modal">YES</button>
+				<button id="idbtnNoAutomode" type="button" class="btn btn-primary" data-dismiss="modal">NO</button>
+			</div>
+		</div>
+		</div>
+	</div>
+	<!-- RobotState Modal -->
+	<div id="idrobotStateModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title"> OPERATIOR CAUTION !!</h4>
+			</div>
+			<div class="modal-body">
+				<p>Make sure the system states are ALL showing 'GREEN' and not 'GRAYED-OUT' except [M/A]</p>
+			</div>
+			<div class="modal-footer">
+				<button id="idbtnNoAutomode" type="button" class="btn btn-primary" data-dismiss="modal">CLOSE</button>
+			</div>
+		</div>
+		</div>
+	</div>
+	
+</div>
+    
+{% endblock %}

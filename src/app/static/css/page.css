@@ -1,0 +1,131 @@
+html, body {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    background-color:#405C6B;
+  }
+
+.box{
+    /*background-image: url(https://source.unsplash.com/Q7PclNhVRI0);*/
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    width: 100%;
+}
+
+.container{
+    margin-top: 1%;
+    width: 96%;
+    background: rgba(20, 20, 20, 0.616);
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    min-width: 400px;
+    min-height: 600px;
+
+}
+
+.container > div{
+    padding: 20px;
+}
+
+.visual-bg{
+    background-color: white;
+}
+.visual{
+    border: 1px solid rgb(190, 35, 14);
+}
+.divCenter{
+    width: 25%;
+    text-align: center;
+}
+
+#zone_joystick{
+    margin: 80px;
+    border: 2px solid rgb(239, 243, 0);
+}
+
+#idbaseVelocity{
+    text-align: center;
+    align-items: center;
+}
+
+#idbaseVelocity > input{
+    width: 60px;
+    text-align: center;
+    font-size: 1.3em;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-radius: 2px;
+}
+
+#idchartDiv{
+    background: rgba(255, 255, 255, 0.349);
+    border: 1px solid rgb(0, 0, 0);
+    height: 150px; 
+    width: 300px; 
+    position: relative;
+    margin: 0 auto;
+    display: none;
+}
+
+#idctrlDiv{
+    display: inline-block;
+    min-width: 300px;
+    width: 335px;
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 35px;
+    background-color: #246d97;
+}
+ul > li{
+    background-color:rgb(241, 222, 170); 
+}
+ul > li > a{
+    color: black;
+}
+ul > li.active { background:rgb(255, 196, 4); }
+.navbar{
+    padding-top: 5px;
+    margin-top:5px;
+}
+.navbar > div > span {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #246d97;
+    font-weight: bold;
+    color: yellow;
+    border-left: 5px yellow solid;
+}
+.toggle.android { border-radius: 0px;}
+.toggle.android .toggle-handle { border-radius: 0px; }
+.table{
+    cursor: pointer;
+    margin-top: 35px;
+    margin-bottom: 50px;
+}
+.modal-backdrop {
+    z-index: -1;
+  }
+div > #idloginDiv{
+    margin-top: 10%;
+    margin-bottom: 10%;
+    width: 100%;
+}
+div > #idloginDiv > div{
+    width: 70%;
+    margin: 0 auto;
+}
+.available{
+    background-color: green;
+}
+.unavailable{
+    background-color: grey;
+}
+.connected{
+    background-color: green;
+    color: white;
+}
+.disconnected{
+    background-color: red;
+    color: white;
+}

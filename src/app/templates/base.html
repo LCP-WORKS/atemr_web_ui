@@ -1,0 +1,91 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+    {% if title %}{{ title }} - ATEMR UI {% else %} ATEMR UI v1.0{% endif %}
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default">
+        <div>
+            {% if current_user.is_anonymous %}
+            <a class="btn btn-md btn-primary" href="{{ url_for('auth.login') }}">Login</a>
+            {% else %}
+            <span>OPERATOR | {{ current_user.username }}</span>
+            <a class="btn btn-md btn-danger" href="{{ url_for('auth.logout') }}">Logout</a>
+            {% endif %}
+            <div class="btn-group-toggle pull-right" data-toggle="buttons" >
+                <label class="btn btn-warning active" id="idconnStatus">STATUS</label>
+                <label class="btn btn-warning" id="idhdwConn">STATUS</label>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% if not current_user.is_anonymous %}
+        <ul id="idCtlTab" class="nav nav-tabs pull-right" style="margin-right: 5px;">
+            <li class="active"><a href="{{ url_for('panels.control') }}">CONTROL</a></li>
+            <li><a href="{{ url_for('panels.mapping') }}">MAPPING</a></li>
+            <li><a href="{{ url_for('panels.settings') }}">SETTING</a></li>
+        </ul>
+        {% endif %}
+
+        {# application content needs to be provided in the app_content block #}
+        {% block app_content %}{% endblock %}
+
+    </div>
+{% endblock %}
+
+{% block styles %}
+    {{super()}}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/page.css') }}" />
+    <link rel="stylesheet" href="{{url_for('static', filename='css/utils/bootstrap-toggle.min.css') }}" />
+    <link rel="icon" href="{{url_for('static', filename='img/favicon.ico') }}" type="image/x-icon"/>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/libs/utils/bootstrap-toggle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/libs/utils/nipplejs.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/libs/utils/eventemitter2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/libs/utils/roslib.min.js') }}"></script>
+    <script data-main = "{{ url_for('static', filename='js/libs/robot_main') }}" src="{{ url_for('static', filename='js/libs/require.js') }}"></script>
+    {% if (request.endpoint == 'panels.control') or (request.endpoint == 'panels.mapping') %}
+        <script src="{{ url_for('static', filename='js/libs/robot_joystick.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/libs/robot_hardware.js') }}"></script>
+    {% endif %}
+    <script> 
+        $(document).ready(function(){
+            
+        });
+
+        const tabElement = document.getElementById("idCtlTab");
+        if($(location).attr('pathname').substring(1) === 'control')
+        {
+            for(let i = 0; i < tabElement.children.length; i++){
+                (i === 0) ? tabElement.children[i].className = 'active' : tabElement.children[i].className = ''; }
+        }
+        else if($(location).attr('pathname').substring(1) === 'mapping')
+        {
+            for(let i = 0; i < tabElement.children.length; i++){
+                (i === 1) ? tabElement.children[i].className = 'active' : tabElement.children[i].className = ''; }
+        }
+        else if($(location).attr('pathname').substring(1) === 'setting')
+        {
+            for(let i = 0; i < tabElement.children.length; i++){
+                (i === 2) ? tabElement.children[i].className = 'active' : tabElement.children[i].className = ''; }
+        }
+        
+		
+	</script>
+{% endblock %}

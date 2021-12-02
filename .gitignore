@@ -1,0 +1,6 @@
+src/.env
+src/venv/
+src/.vscode
+**/logs/
+**/__pycache__/
+

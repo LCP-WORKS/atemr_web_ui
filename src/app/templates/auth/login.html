@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <div class="row" style="height: 100%; background-color: white; border-radius: 8px;">
+        <div class="row">
+            <p class="pull-right" style="margin: 15px;">atemr-v1</p>
+        </div>
+        <div id="idloginDiv" class="row">
+            <div style="width: 25%; min-width: 300px;">
+                <div>
+                    <form action="" method="post" novalidate>
+                        {{ form.hidden_tag() }}
+                        <p>
+                            {{ form.username.label }}<br>
+                            {{ form.username(size=32) }}<br>
+                        </p>
+                        <p>
+                            {{ form.password.label }}<br>
+                            {{ form.password(size=32) }}
+                        </p>
+                        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+                        <p >{{ form.submit(class_="btn btn-md btn-primary") }}</p>
+                    </form>
+                </div>
+                <br>
+                <p>New User? <a class="btn btn-md btn-success" href="{{ url_for('auth.register') }}">Create New User!</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
