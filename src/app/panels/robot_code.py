@@ -1,14 +1,21 @@
 import time
+import rospy
 import psutil as psu
 
 class RobotHardware():
     def __init__(self) -> None:
         self.first_poll = True
     
-    '''Monitor roscore'''
+    '''
+        Monitor roscore
+        Returns TRUE if ROS-CORE is running and FALSE otherwise
+    '''
     def checkCore(self):
-        time.sleep(1)
-        return True
+        try:
+            if(rospy.get_published_topics()):
+                return True
+        except ConnectionRefusedError as e:
+            return False
 
     def get_cpu_load(self):
         cpuload = psu.cpu_percent()

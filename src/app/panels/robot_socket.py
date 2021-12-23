@@ -20,7 +20,8 @@ class RobotSpace(Namespace):
                 json.dumps(dict(cpu=self.robot.get_cpu_load(), 
                                 ram=self.robot.get_vmem(), 
                                 disk=self.robot.get_disk_usage())))
-        emit('checkCoreEvent', {'data': self.robot.checkCore()})
+        emit('checkCoreEvent', {'data': self.robot.checkCore()}) #check roscore alive status
     
     def on_error(self, e):
         print('Error occured: ' + str(e))
+        emit('errorEvent', {'data': 'HDW:CRITICAL'})

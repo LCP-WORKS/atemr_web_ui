@@ -1,7 +1,7 @@
 html, body {
     display: flex;
     flex-flow: column;
-    height: 100%;
+    
     background-color:#405C6B;
   }
 
@@ -15,14 +15,14 @@ html, body {
 }
 
 .container{
-    margin-top: 1%;
+    height: 100%;
     width: 96%;
     background: rgba(20, 20, 20, 0.616);
     backdrop-filter: blur(8px);
-    border-radius: 8px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
     min-width: 400px;
     min-height: 600px;
-
 }
 
 .container > div{
@@ -38,6 +38,9 @@ html, body {
 .divCenter{
     width: 25%;
     text-align: center;
+    height: 100%;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
 }
 
 #zone_joystick{
@@ -77,6 +80,36 @@ html, body {
     margin-top: 35px;
     background-color: #246d97;
 }
+#idsmState{
+    margin-top: 15px;
+    margin-bottom: 3px;
+}
+#idfeedbackVelDiv{
+    width: 100px;
+    margin: 0 auto;
+    border: 4px solid rgb(14, 190, 161);
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 15px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.418);
+    box-shadow: -6px -6px 1px 4px rgba(14, 190, 161, 0.473) inset;
+}
+#video-overlay {
+    display: none;
+    width: 60px;
+    height: 60px;
+  }
+.sideBSide_A{
+    float:right;
+    margin-right: 19%;
+}
+.sideBSide_B{
+    float: right;
+}
+.clearfix{
+    clear:both
+}
 ul > li{
     background-color:rgb(241, 222, 170); 
 }
@@ -86,7 +119,6 @@ ul > li > a{
 ul > li.active { background:rgb(255, 196, 4); }
 .navbar{
     padding-top: 5px;
-    margin-top:5px;
 }
 .navbar > div > span {
     margin-top: 15px;
@@ -100,8 +132,8 @@ ul > li.active { background:rgb(255, 196, 4); }
 .toggle.android .toggle-handle { border-radius: 0px; }
 .table{
     cursor: pointer;
-    margin-top: 35px;
-    margin-bottom: 50px;
+    margin-top: 15px;
+    margin-bottom: 35px;
 }
 .modal-backdrop {
     z-index: -1;
@@ -116,16 +148,48 @@ div > #idloginDiv > div{
     margin: 0 auto;
 }
 .available{
-    background-color: green;
+    background-color: rgb(131, 219, 104);
 }
 .unavailable{
-    background-color: grey;
+    background-color: rgb(150, 39, 39);
 }
 .connected{
-    background-color: green;
+    background-color: rgb(106, 179, 84);;
     color: white;
 }
+.connected.btn:hover{
+    color: white !important;
+}
+.semi-connected{
+    background-color: rgb(224, 172, 30);
+    color: black;
+}
+.semi-connected.btn:hover{
+    color: black !important;
+}
 .disconnected{
-    background-color: red;
+    background-color: rgb(161, 30, 30);
     color: white;
+}
+.disconnected.btn:hover{
+    color: white !important;
+}
+.nopointer{
+    pointer-events: none;
+    cursor: not-allowed;
+}
+.divSize{
+    width: 800px;
+    height: 380px;
+    /*margin: 0 auto;*/
+}
+.divBackDrop{
+    padding: 20px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    background: rgba(20, 20, 20, 0.705);
+}
+#idstreamControlsDiv{
+    padding-left: 16px;
+    padding-right: 16px;
 }

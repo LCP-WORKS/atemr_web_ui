@@ -1,4 +1,5 @@
-createJoystick = function () {
+require(['./ros_connection'], function(robot){
+  createJoystick = function () {
     var options = {
       zone: document.getElementById('zone_joystick'),
       threshold: 0.1,
@@ -12,10 +13,20 @@ createJoystick = function () {
     linear_speed = 0;
     angular_speed = 0;
     move = function(vel_x, vel_z){
-        //! publish robot velocity
-        console.log(vel_x);
-        console.log(vel_z);
-        //! print base velocity to ui
+      //! print base velocity to ui
+      var twist = new ROSLIB.Message({
+          linear : {
+            x : vel_x,
+            y : 0.0,
+            z : 0.0
+          },
+          angular : {
+            x : 0.0,
+            y : 0.0,
+            z : vel_z
+          }
+        });
+        robot.joyPub.publish(twist);
     };
   
     self.manager.on('start', function (event, nipple) {
@@ -30,9 +41,6 @@ createJoystick = function () {
         max_distance = 75.0; // pixels;
         linear_speed = Math.sin(nipple.angle.radian) * max_linear * nipple.distance/max_distance;
         angular_speed = -Math.cos(nipple.angle.radian) * max_angular * nipple.distance/max_distance;
-        /*var fbaseVel = 19;
-        document.getElementById("idbaseVelocity").firstChild.value = fbaseVel;
-        document.getElementById("idbaseVelocity").firstChild.style.backgroundColor = (fbaseVel > 20)? 'red' : 'green';*/
     });
   
     self.manager.on('end', function () {
@@ -42,10 +50,11 @@ createJoystick = function () {
           self.move(0.0, 0.0);
     });
   }
+});
 
 if(($(location).attr('pathname').substring(1) === 'control') || ($(location).attr('pathname').substring(1) === 'mapping'))
 {
-    window.onload = function () {
-        createJoystick();
-      }
+  window.onload = function () {
+      createJoystick();
+    }
 }

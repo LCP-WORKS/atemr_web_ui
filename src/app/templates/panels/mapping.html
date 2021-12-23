@@ -2,9 +2,36 @@
 
 {% block page_content %}
 
-<p>MAPPING TEST PAGE</p>
-<label>CPU LOAD: </label><p id="cpuload"></p>
-<label>RAM: </label><p id="ram"></p>
-<label>DISK USAGE: </label><p id="disk"></p>
+<div class="divBackDrop">
+    <div id="idcameraStreamDiv" class="divSize sideBSide_A">
+        <video id="idvideoTag" src="http://127.0.0.1:9091/stream?topic=/rs_cam/colour/image_raw&width=800&height=380&type=h264" 
+        autoplay="autoplay" width="800px" height="380px" onclick="(this.paused)? this.play() : this.pause()">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div class="clearfix"></div>
+</div>
+<br>
+
+<div id="idstreamControlsDiv" class="row">
+    <input id="idcameraToggle" type="checkbox" data-toggle="toggle" data-on="<i class='glyphicon glyphicon-flash'></i> CAM ON" 
+                data-off="<i class='glyphicon glyphicon-off'></i> CAM OFF" 
+				data-size="large" data-onstyle="success" data-offstyle="default" data-style="ios quick" checked>
+    
+    <div class="pull-right">
+        <button id="idcaptureImage" type="button" class="btn btn-lg btn-info">
+            <span class="glyphicon glyphicon-camera" aria-hidden="true"></span> CAPTURE
+        </button> 
+        <input id="idrecordToggle" type="checkbox" data-toggle="toggle" data-on="<i class='glyphicon glyphicon-record'></i> REC. VIDEO" 
+                data-off="<i class='glyphicon glyphicon-stop'></i> END REC." 
+                data-size="large" data-onstyle="danger" data-offstyle="primary" data-style="ios quick" checked>
+    </div>
+</div>
+<br>
+
+<div class="divBackDrop">
+    <div id="idmapVisualDiv" class="divSize" style="margin: 0 auto;"></div>
+</div>
+<br>
     
 {% endblock %}

@@ -11,11 +11,12 @@
             <a class="btn btn-md btn-primary" href="{{ url_for('auth.login') }}">Login</a>
             {% else %}
             <span>OPERATOR | {{ current_user.username }}</span>
-            <a class="btn btn-md btn-danger" href="{{ url_for('auth.logout') }}">Logout</a>
+            <a class="btn btn-md btn-danger" href="{{ url_for('auth.logout') }}">
+                Logout <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></a>
             {% endif %}
             <div class="btn-group-toggle pull-right" data-toggle="buttons" >
-                <label class="btn btn-warning active" id="idconnStatus">STATUS</label>
-                <label class="btn btn-warning" id="idhdwConn">STATUS</label>
+                <label class="btn btn-warning" id="idconnStatus">WS-STATUS</label>
+                <label class="btn btn-warning" id="idhdwConn">HDW-STATUS</label>
             </div>
         </div>
     </nav>
@@ -58,11 +59,16 @@
     <script src="{{ url_for('static', filename='js/libs/utils/bootstrap-toggle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/libs/utils/nipplejs.js') }}"></script>
     <script src="{{ url_for('static', filename='js/libs/utils/eventemitter2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/libs/utils/easeljs.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/libs/utils/roslib.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/libs/utils/ros2d.min.js') }}"></script>
     <script data-main = "{{ url_for('static', filename='js/libs/robot_main') }}" src="{{ url_for('static', filename='js/libs/require.js') }}"></script>
     {% if (request.endpoint == 'panels.control') or (request.endpoint == 'panels.mapping') %}
         <script src="{{ url_for('static', filename='js/libs/robot_joystick.js') }}"></script>
         <script src="{{ url_for('static', filename='js/libs/robot_hardware.js') }}"></script>
+    {% endif %}
+    {% if (request.endpoint == 'panels.control') %}
+        <script src="{{ url_for('static', filename='js/libs/utils/nav2d.min.js') }}"></script>
     {% endif %}
     <script> 
         $(document).ready(function(){

@@ -1,4 +1,4 @@
-#!/home/ephson/atemr_ws/src/atemr_src/atemr_web_ui/src/venv/bin/python3
+#!/home/ephson/atemr_ws/src/atemr_src/atemr_web_ui/src/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

@@ -1,6 +1,9 @@
 require(['./utils/socket.io.min', './ros_connection', './utils/chart.min'], function(io, robot, Chart){
     //console.log('I am robot hardware');
     $(document).ready(function(){
+        var hdwUpdateID = null;
+        var hdwUpdateCounter = 0;
+        var isAlive = false;
         const ctx = document.getElementById('myChart').getContext('2d');
         Chart.defaults.color = '#00000';
         const myChart = new Chart(ctx, {
@@ -62,12 +65,28 @@ require(['./utils/socket.io.min', './ros_connection', './utils/chart.min'], func
         var socket = io('/server1');
         socket.on('connectionEvent', function(msg) {
             $('#idhdwConn').text(msg.data);
-            document.getElementById("idhdwConn").className = 'connected btn btn-secondary active';
+            document.getElementById("idhdwConn").className = 'connected nopointer btn btn-secondary';
         });
 
         socket.on('disconnectionEvent', function(msg) {
             $('#idhdwConn').text(msg.data);
-            document.getElementById("idhdwConn").className = 'disconnected btn btn-secondary active';
+            document.getElementById("idhdwConn").className = 'disconnected nopointer btn btn-secondary';
+        });
+
+        socket.on("connect_error", (err) => {
+            $('#idhdwConn').text('HDW:CRITICAL');
+            document.getElementById("idhdwConn").className = 'disconnected nopointer btn btn-secondary';
+            console.log(`connect_error due to ${err.message}`);
+            if(hdwUpdateCounter >= 4){
+                clearInterval(hdwUpdateID);
+                socket.disconnect();
+            }
+            hdwUpdateCounter ++;
+          });
+
+        socket.on('errorEvent', function(msg) {
+            $('#idhdwConn').text(msg.data);
+            document.getElementById("idhdwConn").className = 'disconnected nopointer btn btn-secondary';
         });
 
         socket.on('update', function(msg) {
@@ -82,23 +101,25 @@ require(['./utils/socket.io.min', './ros_connection', './utils/chart.min'], func
         socket.on('checkCoreEvent', function(msg) {
             if((msg.data === true) && (!robot.isConnected())){
                 robot.connect();
-                document.getElementById("idconnStatus").className = 'connected btn btn-secondary active';
+                document.getElementById("idconnStatus").className = 'semi-connected nopointer btn btn-secondary';
+                isAlive = false;
+            }
+            else if((msg.data === true) && (robot.isConnected())){
+                document.getElementById("idconnStatus").className = 'connected nopointer btn btn-secondary';
+                isAlive = true;
             }
             else{
-                document.getElementById("idconnStatus").className = 'disconnected btn btn-secondary';
+                document.getElementById("idconnStatus").className = 'disconnected nopointer btn btn-secondary';
+                isAlive = false;
             }
+            robot.broadcastWebStatus(isAlive);
         });
         
         let hdwUpdate = async()=>{
-            setInterval(function(){
+            hdwUpdateID = setInterval(function(){
                 socket.emit('update', {'data': 'update-system'}); 
             }, 1000);
         }
-        try{
-            //hdwUpdate();
-        }
-        catch(err){
-
-        }
+        hdwUpdate();
     });
 });
