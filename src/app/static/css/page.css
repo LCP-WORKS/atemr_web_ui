@@ -43,6 +43,29 @@ html, body {
     border-bottom-left-radius: 16px;
 }
 
+.divCenterContent{
+    width: 100%;
+    text-align: center;
+    height: 100%;
+    padding: 10px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    background-color: rgba(211, 227, 250, 0.527);
+}
+
+.formDiv{
+    max-width: 550px; 
+    margin: 0 auto;
+    padding: 10px;
+}
+.slidecontainer{
+    width: 300px;
+    margin: 0 auto;
+    padding: 15px;
+    border-radius: 16px;
+    background-color: rgba(211, 227, 250, 0.527);
+}
+
 #zone_joystick{
     margin: 80px;
     border: 2px solid rgb(239, 243, 0);
@@ -80,7 +103,7 @@ html, body {
     margin-top: 35px;
     background-color: #246d97;
 }
-#idsmState{
+#idsmState #idcurMap{
     margin-top: 15px;
     margin-bottom: 3px;
 }
@@ -106,6 +129,7 @@ html, body {
 }
 .sideBSide_B{
     float: right;
+    padding: 10px;
 }
 .clearfix{
     clear:both
@@ -192,4 +216,10 @@ div > #idloginDiv > div{
 #idstreamControlsDiv{
     padding-left: 16px;
     padding-right: 16px;
+}
+
+.comboboxContent > li{
+    background: white;
+    list-style-type: none;
+    padding-right: 10px;
 }

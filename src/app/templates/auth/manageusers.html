@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <div class="row" style="background-color: rgba(211, 227, 250, 0.527);">
+        <div class="formDiv">
+            <h1>MANAGE USERS</h1>
+            <hr>
+            {% if users %}
+                {% for user in users %}
+                    <div class="row">
+                        <a type="button" class="btn btn-lg btn-primary pull-left" href="{{ url_for('auth.user', username=user.username ) }}" 
+                            style="margin-right: 5px;">
+                            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ user.username }}</a>
+                        {% if (user.role == 1) %}
+                        <a type="button" class="btn btn-md btn-success" href="{{ url_for('auth.grantrole', username=user.username ) }}">
+                            <span class="glyphicon glyphicon-queen" aria-hidden="true"></span> IS ADMIN</a>
+                        {% elif (user.role == 0) %}
+                            <a type="button" class="btn btn-md btn-danger" href="{{ url_for('auth.grantrole', username=user.username ) }}">
+                                <span class="glyphicon glyphicon-pawn" aria-hidden="true"></span> NOT ADMIN</a>
+                        {% endif %}
+                        {% if (user.has_access == 1) %}
+                            <a type="button" class="btn btn-md btn-success" href="{{ url_for('auth.grantaccess', username=user.username ) }}">
+                                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> ACCESS</a>
+                        {% elif (user.has_access == 0) %}
+                            <a type="button" class="btn btn-md btn-danger" href="{{ url_for('auth.grantaccess', username=user.username ) }}">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> NO ACCESS</a>
+                        {% endif %}
+                        <button id="idbtnremoveUser" type="button" class="btn btn-lg btn-danger pull-right">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> REMOVE</button>
+                    </div><br>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Remove User modal -->
+    <div id="iduserremoveModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> REMOVE USER </h4>
+            </div>
+            <div class="modal-body">
+                <p>User will be permanently removed. Proceed with caution!!</p>
+                <p><input type="text" id="inptremoveUser" placeholder="User to be removed ..."></p>
+            </div>
+            <div class="modal-footer">
+                <button id="idbtnruContinue" type="button" class="btn btn-danger"> CONTINUE</button>
+                <button id="idbtnruCancel" type="button" class="btn btn-primary" data-dismiss="modal">CANCEL</button>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,5 +1,5 @@
 from flask_socketio import Namespace, emit
-import random, json
+import json
 from app.panels.robot_code import RobotHardware
 
 class RobotSpace(Namespace):
@@ -25,3 +25,19 @@ class RobotSpace(Namespace):
     def on_error(self, e):
         print('Error occured: ' + str(e))
         emit('errorEvent', {'data': 'HDW:CRITICAL'})
+    
+    #MEDIA serve and manipulation
+    def on_listimages(self):
+        emit('imgListEvent', json.dumps(self.robot.list_images()))
+    
+    def on_listvideos(self):
+        emit('vidListEvent', json.dumps(self.robot.list_videos()))
+    
+    def on_listmaps(self):
+        emit('mapListEvent', json.dumps(self.robot.list_maps()))
+    
+    #LASERSCAN visualization
+    def on_updatetf(self):
+        res = self.robot.update_tf()
+        if(res is not None):
+            emit('tfEvent', json.dumps(res))

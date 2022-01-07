@@ -22,8 +22,11 @@
                 data-off="<i class='glyphicon glyphicon-off'></i> CAM OFF" 
 				data-size="large" data-onstyle="success" data-offstyle="default" data-style="ios quick" checked>
     <input id="idgoalToggle" type="checkbox" data-toggle="toggle" data-on="<i class='glyphicon glyphicon-move'></i> MAP CTL" 
-                data-off="<i class='glyphicon glyphicon-pushpin'></i> MAP GOAL" 
+                data-off="<i class='glyphicon glyphicon-pushpin'></i> SEND CMD" 
 				data-size="large" data-onstyle="default" data-offstyle="success" data-style="ios quick" checked>
+    <input id="idinitPosToggle" type="checkbox" data-toggle="toggle" data-on="<i class='glyphicon glyphicon-pushpin'></i> INITIAL POS." 
+                data-off="<i class='glyphicon glyphicon-map-marker'></i> SEND GOAL" 
+				data-size="large" data-onstyle="primary" data-offstyle="success" data-style="ios quick" checked>
     
     <div class="pull-right">
         <button id="idcaptureImage" type="button" class="btn btn-lg btn-info">
@@ -37,7 +40,37 @@
 <br>
 
 <div class="divBackDrop">
-    <div id="idnavVisualDiv" class="divSize" style="margin: 0 auto;"></div>
+    <div id="idmapVisualDiv" class="divSize sideBSide_A" ></div>
+    <div class="sideBSide_B" style="color: white;">
+        <p>SHIFT + drag = PAN </p>
+        <p>CTRL + drag =  ZOOM </p>
+        <btn id="idresetZoom" class="btn btn-small btn-success">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> RESET ZOOM</btn>
+        <br>
+        <btn id="idresetPan" class="btn btn-small btn-success" style="margin-top: 5px;">
+                <span class="glyphicon glyphicon-hand-up" aria-hidden="true"></span> RESET PAN</btn>
+    </div>
+    <div class="clearfix"></div>
 </div>
 <br>
+
+<!-- Video Record modal -->
+<div id="idrecordModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title"> VIDEO RECORDING</h4>
+        </div>
+        <div class="modal-body">
+            <p>Do you wish to save the recorded session?</p>
+        </div>
+        <div class="modal-footer">
+            <button id="idbtnSaveVideo" type="button" class="btn btn-success" data-dismiss="modal">SAVE</button>
+            <button id="idbtnCancelVideo" type="button" class="btn btn-danger" data-dismiss="modal">CANCEL</button>
+        </div>
+    </div>
+    </div>
+</div>
 {% endblock %}

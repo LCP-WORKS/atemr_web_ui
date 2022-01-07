@@ -87,6 +87,8 @@ NAV2D.Navigator = function(options) {
   var serverName = options.serverName || '/move_base';
   var actionName = options.actionName || 'move_base_msgs/MoveBaseAction';
   var withOrientation = options.withOrientation || false;
+  var isMapCtrl = true;
+  var isInitialPos = true;
   this.rootObject = options.rootObject || new createjs.Container();
 
   // setup the actionlib client
@@ -95,6 +97,67 @@ NAV2D.Navigator = function(options) {
     actionName : actionName,
     serverName : serverName
   });
+
+  //----------------------------NAV-GOAL interface (Ephson)
+  var initposPub = new ROSLIB.Topic({
+      ros : ros,
+      name: '/initialpose',
+      messageType: 'geometry_msgs/PoseWithCovarianceStamped'
+  });
+  initposPub.advertise();
+  /**
+   * Toggle between goal sending and map control.
+   *
+   */
+  $('#idgoalToggle').change(function(){
+      if($(this).prop('checked')){
+          if(!isMapCtrl){
+              //console.log('pan');
+              isMapCtrl = true;
+          }
+      } else{
+          if(isMapCtrl){
+              //console.log('goal');
+              isMapCtrl = false;
+          }
+      }
+  });
+
+  /**
+   * Toggle between goal sending and initial position sending.
+   *
+   */
+ $('#idinitPosToggle').change(function(){
+    if($(this).prop('checked')){
+        if(!isInitialPos){
+            //console.log('initial pose');
+            isInitialPos = true;
+        }
+    } else{
+        if(isInitialPos){
+            //console.log('goal pose');
+            isInitialPos = false;
+        }
+    }
+  });
+
+  /**
+   * Send initial position to amcl stack.
+   *
+   * @param pose - the robot pose
+   */
+  function sendInitPose(pose){
+    var msg = new ROSLIB.Message({
+      header : {
+        frame_id : '/map'
+      },
+      pose : {
+        pose : pose
+      }
+    });
+
+    initposPub.publish(msg);
+  }
 
   /**
    * Send a goal to the navigation stack with the given pose.
@@ -201,6 +264,7 @@ NAV2D.Navigator = function(options) {
     var yDelta = 0;
 
     var mouseEventHandler = function(event, mouseState) {
+      if(isMapCtrl) return;
 
       if (mouseState === 'down'){
         // get position when mouse button is pressed down
@@ -275,13 +339,16 @@ NAV2D.Navigator = function(options) {
         var qw =  Math.cos(-thetaRadians/2.0);
         
         var orientation = new ROSLIB.Quaternion({x:0, y:0, z:qz, w:qw});
-        
         var pose = new ROSLIB.Pose({
           position :    positionVec3,
           orientation : orientation
         });
-        // send the goal
-        sendGoal(pose);
+        if(isInitialPos){
+          sendInitPose(pose);
+        } else {
+          // send the goal
+          sendGoal(pose);
+        }
       }
     };
 
@@ -317,6 +384,7 @@ NAV2D.Navigator = function(options) {
  *   * rootObject (optional) - the root object to add the click listeners to and render robot markers to
  *   * withOrientation (optional) - if the Navigator should consider the robot orientation (default: false)
  *   * viewer - the main viewer to render to
+ *   * isMapCtrl (optional) - enables or disables pan and zoom control interactions with map
  */
 NAV2D.OccupancyGridClientNav = function(options) {
   var that = this;

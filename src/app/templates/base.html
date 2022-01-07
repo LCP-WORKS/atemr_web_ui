@@ -63,12 +63,11 @@
     <script src="{{ url_for('static', filename='js/libs/utils/roslib.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/libs/utils/ros2d.min.js') }}"></script>
     <script data-main = "{{ url_for('static', filename='js/libs/robot_main') }}" src="{{ url_for('static', filename='js/libs/require.js') }}"></script>
-    {% if (request.endpoint == 'panels.control') or (request.endpoint == 'panels.mapping') %}
-        <script src="{{ url_for('static', filename='js/libs/robot_joystick.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/libs/robot_hardware.js') }}"></script>
-    {% endif %}
+    <script src="{{ url_for('static', filename='js/libs/robot_joystick.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/libs/robot_hardware.js') }}"></script>
+    
     {% if (request.endpoint == 'panels.control') %}
-        <script src="{{ url_for('static', filename='js/libs/utils/nav2d.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/libs/utils/nav2d.js') }}"></script>
     {% endif %}
     <script> 
         $(document).ready(function(){

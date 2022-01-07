@@ -1,4 +1,5 @@
 {% extends "robot_op.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block page_content %}
 
@@ -17,6 +18,17 @@
     <input id="idcameraToggle" type="checkbox" data-toggle="toggle" data-on="<i class='glyphicon glyphicon-flash'></i> CAM ON" 
                 data-off="<i class='glyphicon glyphicon-off'></i> CAM OFF" 
 				data-size="large" data-onstyle="success" data-offstyle="default" data-style="ios quick" checked>
+    <input id="idbeginMappingToggle" type="checkbox" data-toggle="toggle" data-on="<i class='glyphicon glyphicon-globe'></i> BEGIN MAP" 
+                data-off="<i class='glyphicon glyphicon-off'></i> END MAP" 
+				data-size="large" data-onstyle="warning" data-offstyle="danger" data-style="ios quick" checked>
+    <div class="btn-group">
+        <button id="idbtnMapSelect" type="button" class="btn btn-lg btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span> CHOOSE MAP
+        </button>
+        <div class="dropdown-menu">
+            <ul id="idMapSelectList" class="comboboxContent"></ul>
+        </div>
+    </div>
     
     <div class="pull-right">
         <button id="idcaptureImage" type="button" class="btn btn-lg btn-info">
@@ -30,8 +42,49 @@
 <br>
 
 <div class="divBackDrop">
-    <div id="idmapVisualDiv" class="divSize" style="margin: 0 auto;"></div>
+    <div id="idmapVisualDiv" class="divSize sideBSide_A" ></div>
+    <div class="sideBSide_B" style="color: white;">
+        <p>SHIFT + drag = PAN </p>
+        <p>CTRL + drag =  ZOOM </p>
+        <button id="idresetZoom" class="btn btn-small btn-success">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> RESET ZOOM</button>
+        <br>
+        <button id="idresetPan" class="btn btn-small btn-success" style="margin-top: 5px;">
+                <span class="glyphicon glyphicon-hand-up" aria-hidden="true"></span> RESET PAN</button>
+        <br>
+        <div style="width: 156px; margin-top: 100px;">
+            <div>
+                <form action="" method="post" novalidate enctype="multipart/form-data">
+                    {{ form.hidden_tag() }}
+                    <p>
+                        {{ form.files(size=32, class="form-control") }}
+                    </p>
+                    <p ><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> {{ form.submit(class_="btn btn-md btn-primary") }}</p>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
 </div>
 <br>
+
+<!-- BEGIN/END MAP Modal -->
+<div id="idmakemapModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title"> OPERATIOR CAUTION !!</h4>
+        </div>
+        <div class="modal-body">
+            <input type="text" placeholder="Please enter map name" id="idmapnameMakemap">
+        </div>
+        <div class="modal-footer">
+            <button id="idbtnYesMakemap" type="button" class="btn btn-primary" data-dismiss="modal">SAVE</button>
+            <button id="idbtnNoMakemap" type="button" class="btn btn-danger" data-dismiss="modal">DISCARD</button>
+        </div>
+    </div>
+    </div>
+</div>
     
 {% endblock %}

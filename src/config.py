@@ -16,3 +16,4 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['your-email@example.com']
+    MAX_CONTENT_PATH = 5120 * 5120 # upload limit 25mb

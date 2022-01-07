@@ -1045,6 +1045,8 @@ ROS2D.PanView.prototype.pan = function(curX, curY) {
 	this.startPos.y = curY;
 };
 
+ROS2D.PanView.prototype.panReset = function() {this.stage.x = 0;this.stage.y = 380;this.startPos.x = 0; this.startPos.y = 0;};
+
 /**
  * @author Russell Toris - rctoris@wpi.edu
  */

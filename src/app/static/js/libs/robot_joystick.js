@@ -9,6 +9,16 @@ require(['./ros_connection'], function(robot){
       color: '#000000',
     };
     manager = nipplejs.create(options);
+
+    //Web Robot Parameters
+    var max_lin_vel = 0.0;
+    var max_ang_vel = 0.0;
+    robot.max_linear_vel.get(function(data){
+        max_lin_vel = data;
+    });
+    robot.max_angular_vel.get(function(data){
+        max_ang_vel = data;
+    });
   
     linear_speed = 0;
     angular_speed = 0;
@@ -39,8 +49,8 @@ require(['./ros_connection'], function(robot){
         max_linear = 1.0; // m/s
         max_angular = 0.5; // rad/s
         max_distance = 75.0; // pixels;
-        linear_speed = Math.sin(nipple.angle.radian) * max_linear * nipple.distance/max_distance;
-        angular_speed = -Math.cos(nipple.angle.radian) * max_angular * nipple.distance/max_distance;
+        linear_speed = Math.sin(nipple.angle.radian) * max_lin_vel * nipple.distance/max_distance;
+        angular_speed = -Math.cos(nipple.angle.radian) * max_ang_vel * nipple.distance/max_distance;
     });
   
     self.manager.on('end', function () {

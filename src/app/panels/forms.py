@@ -1,7 +1,8 @@
 from flask import request
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField
+from wtforms import StringField, SubmitField, TextAreaField, MultipleFileField
 from wtforms.validators import ValidationError, DataRequired, Length
+from flask_wtf.file import FileAllowed, FileRequired
 from app.models import User
 
 
@@ -30,3 +31,6 @@ class PostForm(FlaskForm):
     post = TextAreaField('Say something', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+class UploadForm(FlaskForm):
+    files = MultipleFileField('Upload MAP')
+    submit = SubmitField('UPLOAD')

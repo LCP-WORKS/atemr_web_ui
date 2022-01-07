@@ -11,7 +11,37 @@ require(['./ros_connection'], function(robot){
         $('[data-toggle="tooltip"]').tooltip();
         $('#idsensorToggle').bootstrapToggle();
         $('#idautomodeModal').modal({ show: false, backdrop: 'static', keyboard: false});
-        $('#idrobotStateModal').modal({ show: false});
+        $('#idrobotStateModal').modal({ show: false, backdrop: 'static', keyboard: false});
+        $('#idrecordModal').modal({ show: false, backdrop: 'static', keyboard: false});
+        $('#iduserremoveModal').modal({ show: false});
+        $('#idimgDeleteModal').modal({show: false});
+        $('#idvidDeleteModal').modal({show: false});
+        $('#idmapDeleteModal').modal({show: false});
+        $('#idmakemapModal').modal({ show: false, backdrop: 'static', keyboard: false});
+        var baseurl = window.location.origin;
+        var max_ang_vel = 0.0;
+        var max_lin_vel = 0.0;
+
+        //Web Robot Parameters
+        robot.max_linear_vel.get(function(data){
+            max_lin_vel = data;
+            if (($(location).attr('pathname').substring(1) === 'setting')){
+                document.getElementById("idmaxLinVel").value = max_lin_vel * 100;
+                document.getElementById("idmaxLinVelVal").textContent = max_lin_vel * 100;
+            }
+        });
+        robot.max_angular_vel.get(function(data){
+            max_ang_vel = data;
+            if (($(location).attr('pathname').substring(1) === 'setting')){
+                document.getElementById("idmaxAngVel").value = max_ang_vel * 100;
+                document.getElementById("idmaxAngVelVal").textContent = max_ang_vel * 100;
+            }
+        });
+        robot.active_map.get(function(data){
+            if (($(location).attr('pathname').substring(1) === 'control') || ($(location).attr('pathname').substring(1) === 'mapping')){
+                $('#idcurMap').text('ACTIVE MAP: ' + data);
+            }
+        });
 
         //AGENT status handler
         robot.agentstatusSub.subscribe(function(msg){
@@ -46,6 +76,7 @@ require(['./ros_connection'], function(robot){
             document.getElementById("idfeedbackVelDiv").style.borderColor = (fvel > 10) ? 'rgb(233, 63, 57)' : 'rgb(14, 190, 161)';
             document.getElementById("idfeedbackVelDiv").style.boxShadow = (fvel > 10) ? '-6px -6px 1px 4px rgba(233, 63, 57, 0.473) inset' : '-6px -6px 1px 4px rgba(14, 190, 161, 0.473) inset';
         });
+        
 
         function get_bits(val, size){// returns bit array with initial 0's
             var data = (val).toString(2).split('').reverse().join('');
@@ -65,11 +96,11 @@ require(['./ros_connection'], function(robot){
 
         $('#idmanautoToggle').change(function(){
             if($(this).prop('checked')){
-                console.log("Manual mode");
+                //console.log("Manual mode");
                 robot.setMode(1); //MANUAL mode
                 isManualMode = true;
             } else{
-                console.log("Auto mode");
+                //console.log("Auto mode");
                 if(canAutomode) $('#idautomodeModal').modal('show');
                 else{//show warning and reset
                     $('#idrobotStateModal').modal('show');
@@ -79,16 +110,13 @@ require(['./ros_connection'], function(robot){
         });
         $('#idsensorToggle').change(function(){
             if($(this).prop('checked')){
-                console.log("Displaying sensor statuses");
                 document.getElementById("idsensorStatusDiv").style.display = "block";
             }else {
-                console.log("NOT displaying sensor statuses"); 
                 document.getElementById("idsensorStatusDiv").style.display = "none";
             }
         });
 
         $("#idbtnYesAutomode").on('click', function () {
-            console.log('yes');
             robot.setMode(2); //AUTOMATIC mode
             modeToggle(false);
         });
@@ -96,26 +124,29 @@ require(['./ros_connection'], function(robot){
             modeToggle(true);
         });
 
+        //MEDIA capture
+        $("#idcaptureImage").on('click', function(){
+            robot.captureMedia(0);
+        });
+
+        $('#idrecordToggle').change(function(){
+            if($(this).prop('checked')){
+                $('#idrecordModal').modal('show');
+            } else{
+                console.log("Start Record");
+                robot.captureMedia(1);
+            }
+        });
+        $("#idbtnSaveVideo").on('click', function () {
+            robot.captureMedia(2);
+        });
+        $("#idbtnCancelVideo").on('click', function () {
+            robot.captureMedia(3);
+        });
+
         // VIDEO STREAM Control
         var vidDiv = document.getElementById("idcameraStreamDiv");
         var isVidDisplayed = true;
-        /*var vid = document.getElementById("idvideoTag");
-        var overlay = document.getElementById("video-overlay");
-        var videoPlaying = true;
-        function hideOverlay() {
-            overlay.style.display = "none";
-            videoPlaying = true;
-            vid.play();
-            console.log('playing');
-        }
-        function showOverlay() {
-            overlay.style.display = "block";
-            videoPlaying = true;
-            console.log('NOT playing');
-        }
-        vid.addEventListener('pause', showOverlay);
-        overlay.addEventListener('click', hideOverlay);
-        */
         $('#idcameraToggle').change(function(){
             if($(this).prop('checked')){
                 if(!isVidDisplayed){
@@ -127,7 +158,6 @@ require(['./ros_connection'], function(robot){
                     vstrm.autoplay = true;
                     if(($(location).attr('pathname').substring(1) === 'control')){
                         vstrm.controls = true;
-                        vstrm.poster= "{{url_for('static', filename='img/play.png') | safe}}";
                     }
                     vidDiv.appendChild(vstrm);
                     isVidDisplayed = true;
@@ -140,20 +170,101 @@ require(['./ros_connection'], function(robot){
             }
         });
 
-        //NAV-GOAL interface
-        var cansendGoal = false;
-        $('#idgoalToggle').change(function(){
-            if($(this).prop('checked')){
-                if(cansendGoal){
-                    console.log('pan');
-                    cansendGoal = false;
-                }
-            } else{
-                if(!cansendGoal){
-                    console.log('goal');
-                    cansendGoal = true;
-                }
+        //MAP Interface
+        //Reset Zoom
+        $('#idresetZoom').on('click',function(){
+            robot.resetZoom();
+        });
+        //Reset Pan
+        $('#idresetPan').on('click',function(){
+            robot.resetPan();
+        });
+
+        //------------------------SETTINGS PAGE ------------------------------------------------------------
+        if (($(location).attr('pathname').substring(1) === 'setting')){
+            var linVelSlider = document.getElementById("idmaxLinVel");
+            var angVelSlider = document.getElementById("idmaxAngVel");
+            linVelSlider.oninput = linFunc;
+            function linFunc(){
+                document.getElementById("idmaxLinVelVal").textContent = linVelSlider.value;
             }
+            angVelSlider.oninput = angFunc;
+            function angFunc(){
+                document.getElementById("idmaxAngVelVal").textContent = angVelSlider.value;
+            }
+            robot.dbusSub.subscribe(function(msg){
+                document.getElementById("idConnName").textContent = msg.data;
+            });
+        }else robot.dbusSub.unsubscribe();
+        
+        $('#idbtnremoveUser').on('click',function(){
+            $('#iduserremoveModal').modal('show');
+        });
+        $('#idbtnruContinue').on('click', function(){
+            var url = baseurl + '/auth/removeuser/' + document.getElementById("inptremoveUser").value;
+            window.location.href = url;
+        });
+        $('#idbtnSaveParams').on('click', function(){
+            var ssid = document.getElementById("idconnSSID").value;
+            var passwd = document.getElementById("idconnPASS").value;
+            if((ssid !== '') && (passwd !== ''))
+                robot.sendWifiConfig(ssid, passwd);
+            
+            max_lin_vel = linVelSlider.value / 100.0;
+            max_ang_vel = angVelSlider.value / 100.0;
+            robot.max_linear_vel.set(max_lin_vel, function(){});
+            robot.max_angular_vel.set(max_ang_vel, function(){});
+        });
+        //              ------------------IMG modal 
+        $('#idbtnDeleteImage').on('click', function(){
+            $('#idimgDeleteModal').modal('show');
+        });
+        $('#idbtnYesImageDelete').on('click', function(){
+            var url = baseurl + '/delete/allImages.jpeg';
+            window.location.href = url;
+        });
+        //              ------------------VID modal 
+        $('#idbtnDeleteVideo').on('click', function(){
+            $('#idvidDeleteModal').modal('show');
+        });
+        $('#idbtnYesVideoDelete').on('click', function(){
+            var url = baseurl + '/delete/allVideos.avi';
+            window.location.href = url;
+        });
+        //              ------------------MAP modal 
+        $('#idbtnDeleteMap').on('click', function(){
+            $('#idmapDeleteModal').modal('show');
+        });
+        $('#idbtnYesMapDelete').on('click', function(){
+            var url = baseurl + '/delete/allMaps';
+            window.location.href = url;
+        });
+
+
+        //------------------------MAPPING PAGE ------------------------------------------------------------
+        $('#idbeginMappingToggle').change(function(){
+            if($(this).prop('checked')){
+                //console.log("End map");
+                $('#idmakemapModal').modal('show');
+            } else{
+                //console.log("Begin map");
+                robot.makeMap(31);
+            }
+        });
+        $('#idbtnYesMakemap').on('click', function(){
+            var mapname = document.getElementById("idmapnameMakemap").value;
+            if(mapname !== ''){
+                //console.log('Map name: ', mapname);
+                robot.makeMap(33, mapname);
+            }
+            else{
+                //console.log('Map name is empty');
+                $('#idbeginMappingToggle').bootstrapToggle('off');
+            }
+        });
+        $('#idbtnNoMakemap').on('click', function(){
+            //console.log("Discard map");
+            robot.makeMap(34);
         });
     });
 });

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+
+<div class="row" >
+	<div class="col-sm-9" style="margin-top: 22px;">
+		{% block page_content %}{% endblock %}
+	</div>
+
+	<div class="col-sm-3 divCenter" style="background-color: rgba(211, 227, 250, 0.527);">
+		<br>
+		<div class="row">
+			<div class="btn-group" style="margin-bottom: 5px;">
+				<button id="idbtnDeleteImage" type="button" class="btn btn-lg btn-danger">
+				  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> DELETE IMAGES</button>
+				<button type="button" class="btn btn-lg btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				  <span class="glyphicon glyphicon-menu-down"></span>
+				</button>
+				<div class="dropdown-menu">
+				  <ul id="idimageListDelete" class="comboboxContent"></ul>
+				</div>
+			</div>
+			<div class="btn-group" style="margin-bottom: 5px;">
+				<a type="button" class="btn btn-lg btn-primary" href="{{ url_for('panels.download', filename='allImages.jpeg' ) }}">
+				  <span class="glyphicon glyphicon-download" aria-hidden="true"></span> DWNL*D IMAGES</a>
+				<button id="idbtnDownloadImage" type="button" class="btn btn-lg btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				  <span class="glyphicon glyphicon-menu-down"></span>
+				</button>
+				<div class="dropdown-menu">
+					<ul id="idimageListDownload" class="comboboxContent"></ul>
+				  </div>
+			</div>
+		</div>
+		<hr>
+
+		<div class="row">
+			<div class="btn-group" style="margin-bottom: 5px;">
+				<button id="idbtnDeleteVideo" type="button" class="btn btn-lg btn-danger">
+				  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> DELETE VIDEOS</button>
+				<button type="button" class="btn btn-lg btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				  <span class="glyphicon glyphicon-menu-down"></span>
+				</button>
+				<div class="dropdown-menu">
+				  <ul id="idvideoListDelete" class="comboboxContent"></ul>
+				</div>
+			</div>
+			<div class="btn-group" style="margin-bottom: 5px;">
+				<a type="button" class="btn btn-lg btn-primary" href="{{ url_for('panels.download', filename='allVideos.avi' ) }}">
+				  <span class="glyphicon glyphicon-download" aria-hidden="true"></span> DWNL*D VIDEOS</a>
+				<button id="idbtnDownloadVideo" type="button" class="btn btn-lg btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				  <span class="glyphicon glyphicon-menu-down"></span>
+				</button>
+				<div class="dropdown-menu">
+					<ul id="idvideoListDownload" class="comboboxContent"></ul>
+				</div>
+			</div>
+		</div>
+		<hr>
+		<hr>
+
+		<div class="row">
+			<div class="btn-group" style="margin-bottom: 5px;">
+				<button id="idbtnDeleteMap" type="button" class="btn btn-lg btn-danger">
+				  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> DELETE MAPS</button>
+				<button  type="button" class="btn btn-lg btn-danger dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				  <span class="glyphicon glyphicon-menu-down"></span>
+				</button>
+				<div class="dropdown-menu">
+				  <ul id="idmapListDelete" class="comboboxContent"></ul>
+				</div>
+			</div>
+			<div class="btn-group" style="margin-bottom: 5px;">
+				<a type="button" class="btn btn-lg btn-primary" href="{{ url_for('panels.download', filename='allMaps' ) }}">
+				  <span class="glyphicon glyphicon-download" aria-hidden="true"></span> DWNL*D MAPS</a>
+				<button id="idbtnDownloadMap" type="button" class="btn btn-lg btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				  <span class="glyphicon glyphicon-menu-down"></span>
+				</button>
+				<div class="dropdown-menu">
+					<ul id="idmapListDownload" class="comboboxContent"></ul>
+				  </div>
+			</div>
+		</div>
+	
+	<!-- FILE Modals -->
+	<div id="idimgDeleteModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title"> OPERATIOR CAUTION !!</h4>
+			</div>
+			<div class="modal-body">
+				<p>All images will be permanently erased. Do you wish to continue?</p>
+			</div>
+			<div class="modal-footer">
+				<button id="idbtnYesImageDelete" type="button" class="btn btn-danger" data-dismiss="modal">YES</button>
+				<button id="idbtnNoImageDelete" type="button" class="btn btn-primary" data-dismiss="modal">NO</button>
+			</div>
+		</div>
+		</div>
+	</div>
+	<div id="idvidDeleteModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title"> OPERATIOR CAUTION !!</h4>
+			</div>
+			<div class="modal-body">
+				<p>All videos will be permanently erased. Do you wish to continue?</p>
+			</div>
+			<div class="modal-footer">
+				<button id="idbtnYesVideoDelete" type="button" class="btn btn-danger" data-dismiss="modal">YES</button>
+				<button id="idbtnNoVideoDelete" type="button" class="btn btn-primary" data-dismiss="modal">NO</button>
+			</div>
+		</div>
+		</div>
+	</div>
+	<div id="idmapDeleteModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title"> OPERATIOR CAUTION !!</h4>
+			</div>
+			<div class="modal-body">
+				<p>All maps will be permanently erased. Do you wish to continue?</p>
+			</div>
+			<div class="modal-footer">
+				<button id="idbtnYesMapDelete" type="button" class="btn btn-danger" data-dismiss="modal">YES</button>
+				<button id="idbtnNoMapDelete" type="button" class="btn btn-primary" data-dismiss="modal">NO</button>
+			</div>
+		</div>
+		</div>
+	</div>
+</div>
+    
+{% endblock %}
