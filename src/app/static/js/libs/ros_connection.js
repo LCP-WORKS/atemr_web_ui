@@ -305,6 +305,6 @@ define(function(require) {
     
     }
     
-    var robot = new ROSConnectionClass('ws://localhost:9090');
+    var robot = new ROSConnectionClass('ws://192.168.1.142:9090');
     return robot;
 });

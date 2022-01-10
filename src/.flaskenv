@@ -1,5 +1,5 @@
 FLASK_APP=robot_ui.py
-FLASK_ENV=development
+FLASK_ENV=production
 FLASK_DEBUG=0
 MAIL_SERVER=localhost
 MAIL_PORT=8025

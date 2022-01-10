@@ -1,2 +1,2 @@
-max_lin_vel: 100 #cm/s
-max_ang_vel: 80 #cm/s
+max_lin_vel: 1 #m/s
+max_ang_vel: 0.8 #m/s
