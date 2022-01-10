@@ -1,6 +1,5 @@
 src/.env
 src/venv/
-src/venv/lib/python3.8/site-packages/pip/
 src/.vscode
 **/logs/
 **/__pycache__/

@@ -1,6 +1,6 @@
 from flask_socketio import Namespace, emit
 import json
-from app.panels.robot_code import RobotHardware
+from app.panels.robot_code import RobotHardware, get_ip
 
 class RobotSpace(Namespace):
     def __init__(self, namespace=None):

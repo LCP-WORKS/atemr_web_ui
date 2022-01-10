@@ -4,7 +4,7 @@ from flask_login import current_user, login_required
 from app import db, socketio
 from app.panels import bp
 from app.panels.robot_socket import RobotSpace
-from app.panels.robot_code import RobotHardware
+from app.panels.robot_code import RobotHardware, get_ip
 from app.panels.forms import UploadForm
 
 robotHDW = RobotHardware()
@@ -22,6 +22,10 @@ def before_request():
 @login_required
 def control():
     return render_template('panels/control.html', title='ControlPanel')
+
+@bp.route('/robot_ip', methods=['GET'])
+def robot_ip():
+    return jsonify(get_ip())
 
 
 @bp.route('/mapping', methods=['GET', 'POST'])

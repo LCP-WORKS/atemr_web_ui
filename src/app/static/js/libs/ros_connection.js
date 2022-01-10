@@ -153,8 +153,10 @@ define(function(require) {
             });
         }
     
-        connect(){
-            this.ros.connect(this.host);
+        connect(host=''){
+            if(host === '')
+                this.ros.connect(this.host);
+            else this.ros.connect(host);
         }
     
         isConnected(){
@@ -304,7 +306,6 @@ define(function(require) {
         }
     
     }
-    
-    var robot = new ROSConnectionClass('ws://192.168.1.142:9090');
+    var robot = new ROSConnectionClass('ws://localhost:9090');
     return robot;
 });

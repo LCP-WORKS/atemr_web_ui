@@ -5,6 +5,23 @@ require(['./utils/socket.io.min', './ros_connection', './utils/chart.min'], func
         var hdwUpdateCounter = 0;
         var isAlive = false;
         var baseurl = window.location.origin;
+        var robot_ip = '';
+
+        function readTextFile(file, callback) {
+            var rawFile = new XMLHttpRequest();
+            rawFile.overrideMimeType("application/json");
+            rawFile.open("GET", file, true);
+            rawFile.onreadystatechange = function() {
+                if (rawFile.readyState === 4 && rawFile.status == "200") {
+                    callback(rawFile.responseText);
+                }
+            }
+            rawFile.send(null);
+        }
+        readTextFile("robot_ip", function(text){
+            robot_ip = JSON.parse(text);
+        });
+        
         if (($(location).attr('pathname').substring(1) === 'control') || ($(location).attr('pathname').substring(1) === 'mapping')){
             const ctx = document.getElementById('myChart').getContext('2d');
             Chart.defaults.color = '#00000';
@@ -105,7 +122,10 @@ require(['./utils/socket.io.min', './ros_connection', './utils/chart.min'], func
 
         socket.on('checkCoreEvent', function(msg) {
             if((msg.data === true) && (!robot.isConnected())){
-                robot.connect();
+                console.log('Making first connection attempt with IP: ', robot_ip);
+                if(robot_ip !== '')
+                    robot.connect('ws://' + robot_ip + ':9090');
+                else robot.connect();
                 document.getElementById("idconnStatus").className = 'semi-connected nopointer btn btn-secondary';
                 isAlive = false;
             }

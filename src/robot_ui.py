@@ -3,7 +3,7 @@
 from app import create_app, db, socketio
 from app.models import User
 import signal, sys
-from app.panels.robot_code import get_ip
+#from app.panels.robot_code import get_ip
 
 app = create_app()
 
@@ -19,7 +19,7 @@ def signal_handler(sig, frame):
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
-    print('Current IP is: ', get_ip())
+    #print('Current IP is: ', get_ip())
     try:
         socketio.run(app, host='0.0.0.0')
     except KeyboardInterrupt:

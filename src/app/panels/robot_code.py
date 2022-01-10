@@ -1,7 +1,7 @@
 import rospy, rospkg
 import tf, tf2_ros
 import psutil as psu
-import os
+import os, json
 import shutil, socket
 from nav_msgs.srv import LoadMap
 from werkzeug.utils import secure_filename
@@ -176,4 +176,14 @@ def get_ip():
         IP = '127.0.0.1'
     finally:
         s.close()
+    '''
+    webPath = rospkg.RosPack().get_path('atemr_web_ui') + '/src/'
+    data = {}
+    data['rosconn'] = []
+    data['rosconn'].append({
+        'ip': IP
+    })
+    with open(os.path.join(webPath, 'robot_comm.json'), 'w') as outfile:
+        json.dump(data, outfile)
+    '''
     return IP
