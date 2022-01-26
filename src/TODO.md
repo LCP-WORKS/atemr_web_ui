@@ -1,7 +1,13 @@
-- Display laserscan on viewer
+- Check the man-auto status before triggering SEND GOAL toggle
+- Check if Camera feed is ON before sending CAPTURE and RECORD video events
+- Finish velocity feedback visualization and add emergency mode visual on the side.
+- Add shutdown and restart buttons (Dropdown)
 
 - Set initial position toggle (DONE)
 - Upload map (.zip) (DONE)
 - display active map (DONE)
 - Select map and trigger map change (DONE)
 - Begin/End map toggle (DONE)
+- Display laserscan on viewer (DONE) - As an alternative: USE an image overlay on top of the map (http://wiki.ros.org/pcl_ros#Publishing_point_clouds)
+- Use a subscriber for rviz VIDEO stream (DONE)
+- Make VIDEO streaming and socket IP dynamic (DONE)

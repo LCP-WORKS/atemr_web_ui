@@ -1,4 +1,4 @@
-require(['./ros_connection'], function(robot){
+require(['./ros_connection', './robot_utility'], function(robot, utility){
     $(document).ready(function(){
         var canAutomode = false; //proxy variable for robot system states
         var isManualMode = true;
@@ -21,8 +21,13 @@ require(['./ros_connection'], function(robot){
         var baseurl = window.location.origin;
         var max_ang_vel = 0.0;
         var max_lin_vel = 0.0;
+        var robot_ip = '';
+        var isStreaming = false;
 
-        //Web Robot Parameters
+        utility.readTextFile("robot_ip", function(text){
+            robot_ip = JSON.parse(text);
+        });
+        //Robot Velocity Parameters
         robot.max_linear_vel.get(function(data){
             max_lin_vel = data;
             if (($(location).attr('pathname').substring(1) === 'setting')){
@@ -36,46 +41,63 @@ require(['./ros_connection'], function(robot){
                 document.getElementById("idmaxAngVel").value = max_ang_vel * 100;
                 document.getElementById("idmaxAngVelVal").textContent = max_ang_vel * 100;
             }
-        });
-        robot.active_map.get(function(data){
-            if (($(location).attr('pathname').substring(1) === 'control') || ($(location).attr('pathname').substring(1) === 'mapping')){
-                $('#idcurMap').text('ACTIVE MAP: ' + data);
-            }
+            robot.kb_teleop.scale = (max_lin_vel + max_ang_vel)/2.0;
         });
 
-        //AGENT status handler
-        robot.agentstatusSub.subscribe(function(msg){
-            //console.log('Received: ', msg);
-            smstate = msg.agentSMState.data;
-            agentStates = get_bits(msg.agentStatus, 5);
-            moduleStates = get_bits(msg.hardwareStatus, 8);
-            $('#idsmState').text('SM:' + smstate);
-            ((smstate === 'IDLE') || (smstate === 'ERROR')) ? $('#idmanautoToggle').bootstrapToggle('enable') : $('#idmanautoToggle').bootstrapToggle('disable');
-            canAutomode = (msg.hardwareStatus === 255) ? true : false;
-            for (var j = 0, cell; cell = agent_table.cells[j]; j++) {
-                cell.className = (agentStates[j] === '1') ? "available" : "unavailable";
-                if(!resetMode)
-                {// match ROS states with WebUI
-                    if((j === 2)){
-                        if((agentStates[j] === '1') && (isManualMode)) modeToggle(false);
-                        if((agentStates[j] === '0') && (!isManualMode)) modeToggle(true);
-                    }
-                    resetMode = true;
+        function getRobotStream(){
+            robot.cameraStream.subscribe(function(msg){
+                document.getElementById('idimgStream').src = "data:image/jpg;base64," + msg.data;
+                if((isVidDisplayed === true) && (isStreaming === false) && (robot_ip !== '')){
+                    var source_url = "http://" + robot_ip + ":9091/stream?topic=/rs_cam/colour/image_raw&width=800&height=380&type=h264";
+                    document.getElementById("idvideoTag").setAttribute("src", source_url);
+                    isStreaming = true;
                 }
-              }
-            for (var j = 0, cell; cell = modules_table.cells[j]; j++) {
-            cell.className = (moduleStates[j] === '1') ? "available" : "unavailable";
-            } 
-            
-        });
+            });
+        }
 
-        //BASE feedback handler
-        robot.feedbackSub.subscribe(function(msg){
-            //msg.meas_vel
-            fvel = 8;
-            document.getElementById("idfeedbackVelDiv").style.borderColor = (fvel > 10) ? 'rgb(233, 63, 57)' : 'rgb(14, 190, 161)';
-            document.getElementById("idfeedbackVelDiv").style.boxShadow = (fvel > 10) ? '-6px -6px 1px 4px rgba(233, 63, 57, 0.473) inset' : '-6px -6px 1px 4px rgba(14, 190, 161, 0.473) inset';
-        });
+        //CONTROL and MAPPING specific subscribers
+        if (($(location).attr('pathname').substring(1) === 'control') || ($(location).attr('pathname').substring(1) === 'mapping')){
+            // Current map indicator
+            robot.active_map.get(function(data){
+                $('#idcurMap').text('ACTIVE MAP: ' + data);
+            });
+
+            //AGENT status handler
+            robot.agentstatusSub.subscribe(function(msg){
+                //console.log('Received: ', msg);
+                smstate = msg.agentSMState.data;
+                agentStates = get_bits(msg.agentStatus, 5);
+                moduleStates = get_bits(msg.hardwareStatus, 8);
+                $('#idsmState').text('SM:' + smstate);
+                ((smstate === 'IDLE') || (smstate === 'ERROR')) ? $('#idmanautoToggle').bootstrapToggle('enable') : $('#idmanautoToggle').bootstrapToggle('disable');
+                canAutomode = (msg.hardwareStatus === 255) ? true : false;
+                for (var j = 0, cell; cell = agent_table.cells[j]; j++) {
+                    cell.className = (agentStates[j] === '1') ? "available" : "unavailable";
+                    if(!resetMode)
+                    {// match ROS states with WebUI
+                        if((j === 2)){
+                            if((agentStates[j] === '1') && (isManualMode)) modeToggle(false);
+                            if((agentStates[j] === '0') && (!isManualMode)) modeToggle(true);
+                        }
+                        resetMode = true;
+                    }
+                }
+                for (var j = 0, cell; cell = modules_table.cells[j]; j++) {
+                cell.className = (moduleStates[j] === '1') ? "available" : "unavailable";
+                } 
+            });
+
+            //BASE feedback handler
+            robot.feedbackSub.subscribe(function(msg){
+                //msg.meas_vel
+                fvel = 8;
+                document.getElementById("idfeedbackVelDiv").style.borderColor = (fvel > 10) ? 'rgb(233, 63, 57)' : 'rgb(14, 190, 161)';
+                document.getElementById("idfeedbackVelDiv").style.boxShadow = (fvel > 10) ? '-6px -6px 1px 4px rgba(233, 63, 57, 0.473) inset' : '-6px -6px 1px 4px rgba(14, 190, 161, 0.473) inset';
+            });
+
+            //CAMERA feed handler
+            getRobotStream();
+        }
         
 
         function get_bits(val, size){// returns bit array with initial 0's
@@ -150,7 +172,7 @@ require(['./ros_connection'], function(robot){
         $('#idcameraToggle').change(function(){
             if($(this).prop('checked')){
                 if(!isVidDisplayed){
-                    var vstrm = document.createElement('video');
+                    /*var vstrm = document.createElement('video');
                     vstrm.id = "idvideoTag";
                     vstrm.src = "http://127.0.0.1:9091/stream?topic=/rs_cam/colour/image_raw&width=800&height=380&type=h264";
                     vstrm.width = 800;
@@ -159,13 +181,26 @@ require(['./ros_connection'], function(robot){
                     if(($(location).attr('pathname').substring(1) === 'control')){
                         vstrm.controls = true;
                     }
-                    vidDiv.appendChild(vstrm);
+                    vidDiv.appendChild(vstrm);*/
+                    document.getElementById("idvideoTag").style.display = "initial";
+                    document.getElementById("idimgStream").style.display = "initial";
+                    getRobotStream();
                     isVidDisplayed = true;
                 }
             } else{
-                if(isVidDisplayed){
-                    document.getElementById("idvideoTag").remove();
+                if(isVidDisplayed){ //stop streaming 
+                    //document.getElementById("idvideoTag").remove();
+                    document.getElementById("idvideoTag").setAttribute("src", "");
+                    document.getElementById("idvideoTag").style.display = "none";
+                    document.getElementById("idimgStream").style.display = "none";
+                    robot.cameraStream.unsubscribe();
                     isVidDisplayed = false;
+                    isStreaming = false;
+                    if(robot_ip === ''){ //query for Robot IP if none
+                        utility.readTextFile("robot_ip", function(text){
+                            robot_ip = JSON.parse(text);
+                        });
+                    }
                 }
             }
         });
@@ -212,6 +247,7 @@ require(['./ros_connection'], function(robot){
             
             max_lin_vel = linVelSlider.value / 100.0;
             max_ang_vel = angVelSlider.value / 100.0;
+            robot.kb_teleop.scale = (max_lin_vel + max_ang_vel)/2.0;
             robot.max_linear_vel.set(max_lin_vel, function(){});
             robot.max_angular_vel.set(max_ang_vel, function(){});
         });

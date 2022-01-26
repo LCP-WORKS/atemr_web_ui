@@ -3,15 +3,13 @@
 {% block page_content %}
 
 <div class="divBackDrop">
-    <div id="idcameraStreamDiv" class="divSize sideBSide_A">
-        <video id="idvideoTag" src="http://127.0.0.1:9091/stream?topic=/rs_cam/colour/image_raw&width=800&height=380&type=h264" 
-        autoplay="autoplay" width="800px" height="380px" onclick="(this.paused)? this.play() : this.pause()" 
+    <div id="idcameraStreamDiv" class="divSize" style="width: 90%;">
+        <img id="idimgStream" style='height: 100%; width: 30%; object-fit: contain' src="{{url_for('static', filename='img/play_64.png') }}">
+        <video id="idvideoTag" class="pull-right" src=""
+        autoplay="autoplay" style='height: 100%; width: 70%; object-fit: contain' onclick="(this.paused)? this.play() : this.pause()" 
         poster="{{url_for('static', filename='img/play.png') }}" controls>
             Your browser does not support the video tag.
         </video>
-    </div>
-    <div class="sideBSide_B">
-        <img id="video-overlay" src="{{url_for('static', filename='img/play_64.png') }}" />
     </div>
     <div class="clearfix"></div>
 </div>
@@ -40,7 +38,7 @@
 <br>
 
 <div class="divBackDrop">
-    <div id="idmapVisualDiv" class="divSize sideBSide_A" ></div>
+    <div id="idmapVisualDiv" class="divSize sideBSide_A" style="width: 80%;" ></div>
     <div class="sideBSide_B" style="color: white;">
         <p>SHIFT + drag = PAN </p>
         <p>CTRL + drag =  ZOOM </p>

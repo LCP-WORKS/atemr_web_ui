@@ -1,4 +1,4 @@
-require(['./utils/socket.io.min', './ros_connection', './utils/chart.min'], function(io, robot, Chart){
+require(['./utils/socket.io.min', './robot_utility', './ros_connection', './utils/chart.min'], function(io, utility, robot, Chart){
     //console.log('I am robot hardware');
     $(document).ready(function(){
         var hdwUpdateID = null;
@@ -7,18 +7,7 @@ require(['./utils/socket.io.min', './ros_connection', './utils/chart.min'], func
         var baseurl = window.location.origin;
         var robot_ip = '';
 
-        function readTextFile(file, callback) {
-            var rawFile = new XMLHttpRequest();
-            rawFile.overrideMimeType("application/json");
-            rawFile.open("GET", file, true);
-            rawFile.onreadystatechange = function() {
-                if (rawFile.readyState === 4 && rawFile.status == "200") {
-                    callback(rawFile.responseText);
-                }
-            }
-            rawFile.send(null);
-        }
-        readTextFile("robot_ip", function(text){
+        utility.readTextFile("robot_ip", function(text){
             robot_ip = JSON.parse(text);
         });
         
@@ -241,15 +230,15 @@ require(['./utils/socket.io.min', './ros_connection', './utils/chart.min'], func
         });
 
         //------LASERSCAN visualization ---------------------
-        socket.on('tfEvent', function(msg){
+        socket.on('scanEvent', function(msg){
             robot.visualizeLaserScan(JSON.parse(msg));
         });
         
         let hdwUpdate = async()=>{
             hdwUpdateID = setInterval(function(){
                 socket.emit('update', {'data': 'update-system'});
-                socket.emit('updatetf'); 
-            }, 1000);
+                socket.emit('updatescan'); 
+            }, 500);
         }
         hdwUpdate();
     });

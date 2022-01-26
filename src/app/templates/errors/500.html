@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>An unexpected error has occurred</h1>
-    <p>The administrator has been notified. Sorry for the inconvenience!</p>
-    <p><a href="{{ url_for('panels.control') }}">Back</a></p>
+    <div class="errFormat">
+        <h1>UNEXPECTED ERROR OCCURRENCE!!</h1>
+        <p>The administrator has been notified. Sorry for the inconvenience!</p>
+        <a class="btn btn-lg btn-primary" href="{{ url_for('panels.control') }}">Home</a>
+    </div>
 {% endblock %}

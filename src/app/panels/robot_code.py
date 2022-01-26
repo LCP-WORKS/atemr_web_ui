@@ -1,9 +1,11 @@
 import rospy, rospkg
-import tf, tf2_ros
 import psutil as psu
 import os, json
 import shutil, socket
 from nav_msgs.srv import LoadMap
+import ros_numpy
+import numpy as np
+from sensor_msgs.msg import PointCloud2
 from werkzeug.utils import secure_filename
 
 class RobotHardware():
@@ -13,10 +15,26 @@ class RobotHardware():
         self.imgPath = self.rospack.get_path('atemr_agent') + '/data/images'
         self.vidPath = self.rospack.get_path('atemr_agent') + '/data/videos'
         self.mapPath = self.rospack.get_path('atemr_localization') + '/maps'
-
-        rospy.init_node('robot_code_node')
-        self.listener = tf.TransformListener()
+        self.isCoreAlive = False
+        self.cloudJS = list()
     
+    def init_hdw(self):
+        rospy.init_node('robot_code_node')
+        rospy.Subscriber('/cloud2', PointCloud2, self.cloudCB)
+    
+    def cloudCB(self, msg):
+        try:
+            pc = ros_numpy.numpify(msg)
+            self.cloudJS.clear()
+            length = len(pc)
+            for pt in pc[0: length: 2]:
+                #print(((tuple(pt))[:2]))
+                self.cloudJS.append({'x': str(pt[0]), 'y': str(pt[1])})
+        except (Exception, TypeError) as e:
+            pass
+
+
+
     '''
         Monitor roscore
         Returns TRUE if ROS-CORE is running and FALSE otherwise
@@ -24,6 +42,9 @@ class RobotHardware():
     def checkCore(self):
         try:
             if(rospy.get_published_topics()):
+                if(not self.isCoreAlive):
+                    self.init_hdw()
+                    self.isCoreAlive = True
                 return True
         except ConnectionRefusedError as e:
             return False
@@ -155,15 +176,8 @@ class RobotHardware():
             os.remove(fname)
         return True
     
-    def update_tf(self):
-        try:
-            self.listener.waitForTransform("map", "laser", rospy.Time(), rospy.Duration(3.0))
-            t = self.listener.getLatestCommonTime("map", "laser")
-            (trans, rot) = self.listener.lookupTransform('map', 'laser', t)
-            return (trans, rot)
-        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException, tf2_ros.TransformException):
-            return None
-        return None
+    def update_scan(self):
+        return self.cloudJS
     
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

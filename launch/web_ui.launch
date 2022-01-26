@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="web_ui_node" pkg="atemr_web_ui" type="robot_ui.py" output="screen" />
+</launch>

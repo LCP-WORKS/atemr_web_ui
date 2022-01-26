@@ -1,6 +1,7 @@
 define(function(require) {
     //require("./utils/roslib.min");
     var bisConnected = false;
+    var canVisualizeScan = false;
     if(($(location).attr('pathname').substring(1) === 'control') || ($(location).attr('pathname').substring(1) === 'mapping')){
         var viewer = new ROS2D.Viewer({
             divID: 'idmapVisualDiv',
@@ -119,15 +120,26 @@ define(function(require) {
                 ros : this.ros,
                 name : '/current_map'
             });
+            this.kb_teleop = new KEYBOARDTELEOP.Teleop({
+                ros: this.ros,
+                topic: '/web_joy/cmd_vel'
+            });
+            this.cameraStream = new ROSLIB.Topic({
+                ros : this.ros,
+                name: '/camera1/compressed/color/compressed',
+                messageType: 'sensor_msgs/CompressedImage'
+            });
 
             //nav/map visualizaiton
             if(($(location).attr('pathname').substring(1) === 'control')){
                 this.activateNavGrid();
                 registerMouseHandlers();
+                this.activateLaserViz();
             }
             if (($(location).attr('pathname').substring(1) === 'mapping')){
                 this.activateMapGrid();
                 registerMouseHandlers();
+                this.activateLaserViz();
             }
         }
     
@@ -293,16 +305,19 @@ define(function(require) {
             panView.panReset();
         }
 
+        activateLaserViz()
+        {
+            this.scanpts = new ROS2D.ScanPoints({
+                ros: this.ros,
+                rootObject: viewer.scene,
+                points: null
+            });
+            canVisualizeScan = true;
+        }
         visualizeLaserScan(data)
         {
-            /*
-            1- get laserscan message
-            2- run a filtration algorithm (adjust the resolution)
-            3- convert laser distances to laser(x, y) coordinates
-            4- transform laser(x, y) coords to map(x, y) coords
-            5- convert map(x, y) to viewer(x, y)
-            6- display dots 
-             */
+            if(canVisualizeScan)
+                this.scanpts.setPoints(data);   
         }
     
     }

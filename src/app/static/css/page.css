@@ -203,9 +203,9 @@ div > #idloginDiv > div{
     cursor: not-allowed;
 }
 .divSize{
-    width: 800px;
+    object-fit: contain;
     height: 380px;
-    /*margin: 0 auto;*/
+    margin: 0 auto;
 }
 .divBackDrop{
     padding: 20px;
@@ -222,4 +222,12 @@ div > #idloginDiv > div{
     background: white;
     list-style-type: none;
     padding-right: 10px;
+}
+
+.errFormat{
+    color: red;
+}
+.errFormat > p {
+    background-color: white;
+    padding: 10px;
 }

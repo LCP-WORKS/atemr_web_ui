@@ -270,6 +270,7 @@ ROS2D.OccupancyGridClient = function(options) {
     else {
       that.rootObject.addChild(that.currentGrid);
     }
+    that.rootObject.swapChildrenAt(0, 1);
 
     that.emit('change');
 
@@ -326,6 +327,7 @@ ROS2D.OccupancyGridSrvClient = function(options) {
       message : response.map
     });
     that.rootObject.addChild(that.currentGrid);
+    that.rootObject.swapChildrenAt(0, 1);
 
     that.emit('change', that.currentGrid);
   });
@@ -630,6 +632,79 @@ ROS2D.PathShape.prototype.setPath = function(path) {
 };
 
 ROS2D.PathShape.prototype.__proto__ = createjs.Shape.prototype;
+
+/**
+ * @author Ephson Guakro leocorp96@gmail.com
+ */
+/**
+ * A shape to draw a custom datatype msg
+ *
+ * @constructor
+ * @param options - object with following keys:
+ *   * path (optional) - the initial path to draw
+ *   * strokeSize (optional) - the size of the outline
+ *   * strokeColor (optional) - the createjs color for the stroke
+ */
+ ROS2D.ScanPoints = function(options) {
+	options = options || {};
+  this.rootObject = options.rootObject || new createjs.Container();
+	var points = options.points;
+	this.strokeSize = options.strokeSize || 0.05;
+	this.strokeColor = options.strokeColor || createjs.Graphics.getRGB(255, 0, 185);
+
+  // get a handle to the stage
+	if (this.rootObject instanceof createjs.Stage) {
+		this.stage = this.rootObject;
+	}
+	else {
+		this.stage = this.rootObject.getStage();
+	}
+  var index = null;
+	
+	// draw the line
+	this.graphics = new createjs.Graphics();
+	
+	if (points !== null && typeof points !== 'undefined') {
+		this.graphics.setStrokeStyle(this.strokeSize);
+		//this.graphics.beginStroke(this.strokeColor);
+		//this.graphics.moveTo(path.poses[0].pose.position.x / this.scaleX, path.poses[0].pose.position.y / -this.scaleY);
+		for (var i=1; i<points.length; ++i) {
+      stg_pos = this.stage.rosToGlobal(points[i]);
+			//this.graphics.drawCircle(stg_pos.x, stg_pos.y, 50);
+      //this.graphics.drawCircle(points[i].x / this.scaleX, points[i].y / -this.scaleY, 1);
+		}
+		this.graphics.endStroke();
+	}
+	
+	// create the shape
+	//createjs.Shape.call(this, this.graphics);
+  this.rootObject.addChild(this);
+  index = this.rootObject.getChildIndex(this);
+};
+
+/**
+ * Set the path to draw
+ *
+ * @param path of type [{x:'1', y : '2'}, {...}]
+ */
+ROS2D.ScanPoints.prototype.setPoints = function(points) {
+	this.graphics.clear();
+	if (points !== null && typeof points !== 'undefined') {
+		this.graphics.setStrokeStyle(this.strokeSize, "round", "round").beginStroke(this.strokeColor);
+    this.graphics.moveTo(points[0].x / this.scaleX, points[0].y / -this.scaleY);
+		for (var i=1; i<points.length; ++i) {
+			//stg_pos = this.stage.rosToGlobal(points[i]);
+			//this.graphics.drawCircle(stg_pos.x, stg_pos.y, 50);
+      //this.graphics.drawCircle(points[i].x / this.scaleX, points[i].y / -this.scaleY, 0.1);
+      this.graphics.lineTo(points[i].x / this.scaleX, points[i].y / -this.scaleY);
+      
+		}
+		this.graphics.endStroke();
+	}
+};
+
+ROS2D.ScanPoints.prototype.__proto__ = createjs.Shape.prototype;
+
 
 /**
  * @author Bart van Vliet - bart@dobots.nl

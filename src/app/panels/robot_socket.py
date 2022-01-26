@@ -37,7 +37,7 @@ class RobotSpace(Namespace):
         emit('mapListEvent', json.dumps(self.robot.list_maps()))
     
     #LASERSCAN visualization
-    def on_updatetf(self):
-        res = self.robot.update_tf()
-        if(res is not None):
-            emit('tfEvent', json.dumps(res))
+    def on_updatescan(self):
+        res = self.robot.update_scan()
+        if(len(res) != 0):
+            emit('scanEvent', json.dumps(res))
