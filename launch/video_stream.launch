@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <node pkg="web_video_server" type="web_video_server" name="video_stream_NODE">
+  <node pkg="web_video_server" type="web_video_server" name="video_stream_NODE" respawn="true">
     <param name="port" value="9091"/>
   </node>
 </launch>
