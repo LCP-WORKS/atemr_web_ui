@@ -126,7 +126,7 @@ define(function(require) {
             });
             this.cameraStream = new ROSLIB.Topic({
                 ros : this.ros,
-                name: '/camera1/compressed/color/compressed',
+                name: '/camera/color/image_raw/compressed',
                 messageType: 'sensor_msgs/CompressedImage'
             });
 
