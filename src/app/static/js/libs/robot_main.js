@@ -48,7 +48,7 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
             robot.cameraStream.subscribe(function(msg){
                 document.getElementById('idimgStream').src = "data:image/jpg;base64," + msg.data;
                 if((isVidDisplayed === true) && (isStreaming === false) && (robot_ip !== '')){
-                    var source_url = "http://" + robot_ip + ":9091/stream?topic=/camera/color/image_raw/compressed&width=640&height=480&type=h264";
+                    var source_url = "http://" + robot_ip + ":9091/stream?topic=/camera/color/image_raw&width=640&height=480&type=h264";
                     document.getElementById("idvideoTag").setAttribute("src", source_url);
                     isStreaming = true;
                 }
@@ -174,7 +174,7 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
                 if(!isVidDisplayed){
                     /*var vstrm = document.createElement('video');
                     vstrm.id = "idvideoTag";
-                    vstrm.src = "http://127.0.0.1:9091/stream?topic=/camera/color/image_raw/compressed&width=640&height=480&type=h264";
+                    vstrm.src = "http://127.0.0.1:9091/stream?topic=/camera/color/image_raw&width=640&height=480&type=h264";
                     vstrm.width = 800;
                     vstrm.height = 380;
                     vstrm.autoplay = true;
