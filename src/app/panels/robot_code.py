@@ -7,6 +7,7 @@ import ros_numpy
 import numpy as np
 from sensor_msgs.msg import PointCloud2
 from werkzeug.utils import secure_filename
+from netifaces import interfaces, ifaddresses, AF_INET
 
 class RobotHardware():
     def __init__(self) -> None:
@@ -57,7 +58,10 @@ class RobotHardware():
         return cpuload
 
     def get_vmem(self):
-        return round(psu.virtual_memory().available * 100 / psu.virtual_memory().total, 2)
+        tot_m, used_m, free_m = map(int, os.popen('free -t -m').readlines()[-1].split()[1:])
+        res = (1.0 - (used_m/tot_m)) * 100.0
+        return round((res if(res <= 100.0) else 100.00), 2)
+        #return round(psu.virtual_memory().available * 100 / psu.virtual_memory().total, 2)
 
     def get_disk_usage(self):
         return psu.disk_usage('/').percent
@@ -184,8 +188,11 @@ def get_ip():
     s.settimeout(0)
     try:
         # doesn't even have to be reachable
-        s.connect(('10.255.255.255', 1))
-        IP = s.getsockname()[0]
+        #s.connect(('10.255.255.255', 1))
+        #IP = s.getsockname()[0]
+        for ifaceName in interfaces():
+            if (ifaceName.startswith('wl')):
+                IP = [i['addr'] for i in ifaddresses(ifaceName).setdefault(AF_INET, [{'addr':'No IP addr'}] )]
     except Exception:
         IP = '127.0.0.1'
     finally:
