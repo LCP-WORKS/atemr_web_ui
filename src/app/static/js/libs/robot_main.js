@@ -66,18 +66,18 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
             robot.agentstatusSub.subscribe(function(msg){
                 //console.log('Received: ', msg);
                 smstate = msg.agentSMState.data;
-                agentStates = get_bits(msg.agentStatus, 5);
+                agentStates = get_bits(msg.agentStatus, 6);
                 moduleStates = get_bits(msg.hardwareStatus, 8);
                 $('#idsmState').text('SM:' + smstate);
                 ((smstate === 'IDLE') || (smstate === 'ERROR')) ? $('#idmanautoToggle').bootstrapToggle('enable') : $('#idmanautoToggle').bootstrapToggle('disable');
                 canAutomode = (msg.hardwareStatus === 255) ? true : false;
-                for (var j = 0, cell; cell = agent_table.cells[j]; j++) {
-                    cell.className = (agentStates[j] === '1') ? "available" : "unavailable";
+                for (var i = 0, cell; cell = agent_table.cells[i]; i++) {
+                    cell.className = (agentStates[i] === '1') ? "available" : "unavailable";
                     if(!resetMode)
                     {// match ROS states with WebUI
-                        if((j === 2)){
-                            if((agentStates[j] === '1') && (isManualMode)) modeToggle(false);
-                            if((agentStates[j] === '0') && (!isManualMode)) modeToggle(true);
+                        if((i === 2)){
+                            if((agentStates[i] === '1') && (isManualMode)) modeToggle(false);
+                            if((agentStates[i] === '0') && (!isManualMode)) modeToggle(true);
                         }
                         resetMode = true;
                     }
@@ -101,7 +101,7 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
         
 
         function get_bits(val, size){// returns bit array with initial 0's
-            var data = (val).toString(2).split('').reverse().join('');
+            var data = (val).toString(2).split('').join('');
             var remainingZeroes = new Array((size+1) - data.length).join('0');
             return (data + remainingZeroes).split('').reverse().join('');
         };
