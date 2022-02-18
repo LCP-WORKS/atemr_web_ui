@@ -2,12 +2,12 @@ import rospy, rospkg
 import psutil as psu
 import os, json
 import shutil, socket
-from nav_msgs.srv import LoadMap
 import ros_numpy
 import numpy as np
 from sensor_msgs.msg import PointCloud2
 from werkzeug.utils import secure_filename
 from netifaces import interfaces, ifaddresses, AF_INET
+from atemr_msgs.srv import WebService, WebServiceRequest
 
 class RobotHardware():
     def __init__(self) -> None:
@@ -18,6 +18,7 @@ class RobotHardware():
         self.mapPath = self.rospack.get_path('atemr_localization') + '/maps'
         self.isCoreAlive = False
         self.cloudJS = list()
+        self.agentClient = rospy.ServiceProxy('WebUIServer', WebService)
     
     def init_hdw(self):
         rospy.init_node('robot_code_node')
@@ -59,7 +60,7 @@ class RobotHardware():
 
     def get_vmem(self):
         tot_m, used_m, free_m = map(int, os.popen('free -t -m').readlines()[-1].split()[1:])
-        res = (1.0 - (used_m/tot_m)) * 100.0
+        res = ((used_m/tot_m)) * 100.0
         return round((res if(res <= 100.0) else 100.00), 2)
         #return round(psu.virtual_memory().available * 100 / psu.virtual_memory().total, 2)
 
@@ -155,13 +156,17 @@ class RobotHardware():
                     return shutil.make_archive(fname, 'zip', path)
         return None
     
+    ''' Make service call to the agent '''
     def change_map(self, map_name):
-        map_url = os.path.join(self.mapPath, map_name, map_name + '.yaml')
-        rospy.wait_for_service('change_map', timeout=5)
+        rospy.wait_for_service('WebUIServer', timeout=5)
+        req = WebServiceRequest()
+        req.is_map_action.data = True
+        req.mapAction = req.CHANGE_MAP
+        req.mapName.data = map_name
         try:
-            change_map_proxy = rospy.ServiceProxy('change_map', LoadMap)
-            resp = change_map_proxy(map_url)
-            return True if(resp.result == 0) else False
+            res = self.agentClient.call(req)
+            rospy.loginfo('Made call to agent')
+            return True if (res.canExecute.data) else False
         except rospy.ServiceException as e:
             pass
         return False
@@ -184,8 +189,8 @@ class RobotHardware():
         return self.cloudJS
     
 def get_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.settimeout(0)
+    #s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    #s.settimeout(0)
     try:
         # doesn't even have to be reachable
         #s.connect(('10.255.255.255', 1))
@@ -195,8 +200,8 @@ def get_ip():
                 IP = [i['addr'] for i in ifaddresses(ifaceName).setdefault(AF_INET, [{'addr':'No IP addr'}] )]
     except Exception:
         IP = '127.0.0.1'
-    finally:
-        s.close()
+    #finally:
+        #s.close()
     '''
     webPath = rospkg.RosPack().get_path('atemr_web_ui') + '/src/'
     data = {}
