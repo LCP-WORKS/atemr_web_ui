@@ -1,8 +1,7 @@
-- Check the man-auto status before triggering SEND GOAL toggle
-- Check if Camera feed is ON before sending CAPTURE and RECORD video events
-- Finish velocity feedback visualization and add emergency mode visual on the side.
-- Add shutdown and restart buttons (Dropdown)
-
+- Check if Camera feed is ON before sending CAPTURE and RECORD video events (DONE)
+- Check the man-auto status before triggering SEND GOAL toggle (DONE)
+- Finish velocity feedback visualization and add emergency mode visual on the side. (DONE)
+- Add shutdown and restart buttons (Dropdown) (DONE)
 - Set initial position toggle (DONE)
 - Upload map (.zip) (DONE)
 - display active map (DONE)

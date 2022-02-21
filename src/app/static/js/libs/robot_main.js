@@ -18,6 +18,10 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
         $('#idvidDeleteModal').modal({show: false});
         $('#idmapDeleteModal').modal({show: false});
         $('#idmakemapModal').modal({ show: false, backdrop: 'static', keyboard: false});
+        $('#idrebootModal').modal({show: false});
+        $('#idshutdownModal').modal({show: false});
+        document.getElementById("idcancelGoal").style.display = "none";
+        document.getElementById("idinitPosToggle").disabled = true;
         var baseurl = window.location.origin;
         var max_ang_vel = 0.0;
         var max_lin_vel = 0.0;
@@ -70,7 +74,9 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
                 moduleStates = get_bits(msg.hardwareStatus, 8);
                 $('#idsmState').text('SM:' + smstate);
                 ((smstate === 'IDLE') || (smstate === 'ERROR')) ? $('#idmanautoToggle').bootstrapToggle('enable') : $('#idmanautoToggle').bootstrapToggle('disable');
-                canAutomode = (msg.hardwareStatus === 255) ? true : false;
+                if((smstate === 'EXEC')) document.getElementById("idcancelGoal").style.display = "inline-block";
+                else document.getElementById("idcancelGoal").style.display = "none";
+                canAutomode = ((msg.hardwareStatus === 255) && (msg.agentStatus >= 54)) ? true : false;
                 for (var i = 0, cell; cell = agent_table.cells[i]; i++) {
                     cell.className = (agentStates[i] === '1') ? "available" : "unavailable";
                     if(!resetMode)
@@ -88,11 +94,13 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
             });
 
             //BASE feedback handler
+            fdbkElementDiv = document.getElementById("idfeedbackVelDiv");
+            fdbkElement = document.getElementById("idfeedbackVel");
             robot.feedbackSub.subscribe(function(msg){
-                //msg.meas_vel
-                fvel = 8;
-                document.getElementById("idfeedbackVelDiv").style.borderColor = (fvel > 10) ? 'rgb(233, 63, 57)' : 'rgb(14, 190, 161)';
-                document.getElementById("idfeedbackVelDiv").style.boxShadow = (fvel > 10) ? '-6px -6px 1px 4px rgba(233, 63, 57, 0.473) inset' : '-6px -6px 1px 4px rgba(14, 190, 161, 0.473) inset';
+                fvel = msg.twist.twist.linear.x * 1000.0;
+                fdbkElement.textContent = fvel;
+                fdbkElementDiv.style.borderColor = (fvel > 200.0) ? 'rgb(233, 63, 57)' : 'rgb(14, 190, 161)';
+                fdbkElementDiv.style.boxShadow = (fvel > 200.0) ? '-6px -6px 1px 4px rgba(233, 63, 57, 0.473) inset' : '-6px -6px 1px 4px rgba(14, 190, 161, 0.473) inset';
             });
 
             //CAMERA feed handler
@@ -121,6 +129,7 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
                 //console.log("Manual mode");
                 robot.setMode(1); //MANUAL mode
                 isManualMode = true;
+                document.getElementById("idinitPosToggle").disabled = true;
             } else{
                 //console.log("Auto mode");
                 if(canAutomode) $('#idautomodeModal').modal('show');
@@ -140,6 +149,7 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
 
         $("#idbtnYesAutomode").on('click', function () {
             robot.setMode(2); //AUTOMATIC mode
+            document.getElementById("idinitPosToggle").disabled = false;
             modeToggle(false);
         });
         $("#idbtnNoAutomode").on('click', function () {
@@ -148,15 +158,14 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
 
         //MEDIA capture
         $("#idcaptureImage").on('click', function(){
-            robot.captureMedia(0);
+            if(isStreaming) robot.captureMedia(0);
         });
-
         $('#idrecordToggle').change(function(){
             if($(this).prop('checked')){
-                $('#idrecordModal').modal('show');
+                if(isStreaming) $('#idrecordModal').modal('show');
             } else{
-                console.log("Start Record");
-                robot.captureMedia(1);
+                //console.log("Start Record: ", isStreaming);
+                if(isStreaming) robot.captureMedia(1);
             }
         });
         $("#idbtnSaveVideo").on('click', function () {
@@ -301,6 +310,22 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
         $('#idbtnNoMakemap').on('click', function(){
             //console.log("Discard map");
             robot.makeMap(34);
+        });
+
+        //---------------------GENERAL --------------------------------------------------------------------------
+        $("#idrebootBtn").on('click', function() {
+            $('#idrebootModal').modal('show');
+        });
+        $('#idbtnContinueReboot').on('click', function(){
+            var url = baseurl + '/power/reboot';
+            window.location.href = url;
+        });
+        $("#idshutdownBtn").on('click', function() {
+            $('#idshutdownModal').modal('show');
+        });
+        $('#idbtnContinueShutdown').on('click', function(){
+            var url = baseurl + '/power/shutdown';
+            window.location.href = url;
         });
     });
 });

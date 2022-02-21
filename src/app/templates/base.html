@@ -15,6 +15,12 @@
                 Logout <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></a>
             {% endif %}
             <div class="btn-group-toggle pull-right" data-toggle="buttons" >
+                {% if not current_user.is_anonymous %}
+                <a id="idrebootBtn" class="btn btn-md btn-primary">
+                    REBOOT <span class="glyphicon glyphicon-off" aria-hidden="true"></span></a>
+                <a id="idshutdownBtn" class="btn btn-md btn-danger">
+                    TURN OFF <span class="glyphicon glyphicon-off" aria-hidden="true"></span></a>
+                {% endif %}
                 <label class="btn btn-warning" id="idconnStatus">WS-STATUS</label>
                 <label class="btn btn-warning" id="idhdwConn">HDW-STATUS</label>
             </div>
@@ -44,6 +50,44 @@
         {# application content needs to be provided in the app_content block #}
         {% block app_content %}{% endblock %}
 
+    </div>
+
+    <!-- Reboot / shutdown modals -->
+    <div id="idrebootModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> REBOOT WARNING </h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to reboot?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="idbtnContinueReboot" type="button" class="btn btn-success" data-dismiss="modal">CONTINUE</button>
+                <button id="idbtnCancelReboot" type="button" class="btn btn-danger" data-dismiss="modal">CANCEL</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div id="idshutdownModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> SHUTDOWN WARNING </h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to shutdown?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="idbtnContinueShutdown" type="button" class="btn btn-success" data-dismiss="modal">CONTINUE</button>
+                <button id="idbtnCancelShutdown" type="button" class="btn btn-danger" data-dismiss="modal">CANCEL</button>
+            </div>
+        </div>
+        </div>
     </div>
 {% endblock %}
 

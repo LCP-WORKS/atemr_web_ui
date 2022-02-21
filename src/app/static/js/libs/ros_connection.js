@@ -90,8 +90,8 @@ define(function(require) {
             });
             this.feedbackSub = new ROSLIB.Topic({
                 ros : this.ros,
-                name: '/base_controller/feedback',
-                messageType: 'atemr_msgs/Feedback'
+                name: '/odometry/filtered_odom',
+                messageType: 'nav_msgs/Odometry'
             });
             this.agentClient = new ROSLIB.Service({
                 ros : this.ros,
@@ -278,7 +278,8 @@ define(function(require) {
         {
             var gridClient = new ROS2D.OccupancyGridClient({
                 ros: this.ros,
-                rootObject: viewer.scene
+                rootObject: viewer.scene,
+                continuous: true
             });
             gridClient.on('change', function(){
                 viewer.scaleToDimensions(gridClient.currentGrid.width, gridClient.currentGrid.height);
@@ -293,7 +294,7 @@ define(function(require) {
                 ros: this.ros,
                 rootObject: viewer.scene,
                 viewer: viewer,
-                serverName: '/move_base',
+                serverName: '/atemr_base',
                 withOrientation: true
             });
         }

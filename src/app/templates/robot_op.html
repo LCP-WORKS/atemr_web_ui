@@ -19,6 +19,7 @@
 		<div class="table-responsive">
 			<button id="idsmState" type="button" class="nopointer btn btn-info pull-left">SM:STATE</button>
 			<button id="idcurMap" type="button" class="nopointer btn btn-info pull-left" style="margin-left: 5px;">CURRENT MAP:blank0</button> 
+			<a id="idcancelGoal" type="button" class="btn btn-danger pull-left" style="margin-left: 5px;" href="{{ url_for('panels.cancelgoal') }}">CANCEL GOAL</a> 
 			<table class="table table-bordered">
 			  <tr id="idrobotStatus">
 				  <td data-toggle="tooltip" data-placement="top" title="emergency">E</td>
@@ -51,7 +52,7 @@
 		</div>
 
 		<div id="idfeedbackVelDiv" class="visual">
-			<p><span style="font-size: large; font-weight: 300;" id="idfeedbackVel">17</span> RPM</p>
+			<p><span style="font-size: large; font-weight: 300;" id="idfeedbackVel">0</span> mm/s</p>
 		</div>
 
 		<div id="idctrlDiv">

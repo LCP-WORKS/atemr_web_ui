@@ -158,17 +158,17 @@ class RobotHardware():
     
     ''' Make service call to the agent '''
     def change_map(self, map_name):
-        rospy.wait_for_service('WebUIServer', timeout=5)
-        req = WebServiceRequest()
-        req.is_map_action.data = True
-        req.mapAction = req.CHANGE_MAP
-        req.mapName.data = map_name
         try:
+            rospy.wait_for_service('WebUIServer', timeout=5)
+            req = WebServiceRequest()
+            req.is_map_action.data = True
+            req.mapAction = req.CHANGE_MAP
+            req.mapName.data = map_name
             res = self.agentClient.call(req)
             rospy.loginfo('Made call to agent')
             return True if (res.canExecute.data) else False
-        except rospy.ServiceException as e:
-            pass
+        except (rospy.ServiceException, rospy.ROSException) as e:
+            rospy.logerr(e)
         return False
     
     def upload_map(self, data):
@@ -187,6 +187,35 @@ class RobotHardware():
     
     def update_scan(self):
         return self.cloudJS
+    
+    def power(self, cmd):
+        try:
+            rospy.wait_for_service('WebUIServer', timeout=5)
+            req = WebServiceRequest()
+            req.is_operator_action.data = True
+            if(cmd == 'reboot'):
+                req.initiateRestart.data = True
+            if(cmd == 'shutdown'):
+                req.initiateShutdown.data = True
+            res = self.agentClient.call(req)
+            rospy.loginfo('Sent power command!')
+            return True if (res.canExecute.data) else False
+        except (rospy.ServiceException, rospy.ROSException) as e:
+            rospy.logerr(e)
+        return False
+    
+    def cancel_goal(self):
+        try:
+            rospy.wait_for_service('WebUIServer', timeout=5)
+            req = WebServiceRequest()
+            req.is_goal_action.data = True
+            req.cancel_goal.data = True
+            res = self.agentClient.call(req)
+            rospy.loginfo('Sent cancel goal request!')
+            return True if (res.canExecute.data) else False
+        except (rospy.ServiceException, rospy.ROSException) as e:
+            rospy.logerr(e)
+        return False
     
 def get_ip():
     #s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

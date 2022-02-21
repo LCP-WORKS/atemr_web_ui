@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, g, jsonify, current_app, send_file
-from flask_login import current_user, login_required
+from flask_login import current_user, login_required, logout_user
 from app import db, socketio
 from app.panels import bp
 from app.panels.robot_socket import RobotSpace
@@ -72,6 +72,28 @@ def changemap(filename):
         return redirect(url_for('panels.mapping'))
     flash('MAP successfully changed!!')
     return redirect(url_for('panels.mapping'))
+
+@bp.route('/power/<command>', methods=['GET'])
+@login_required
+def power(command):
+    res = robotHDW.power(command)
+    if (res is False):
+        flash('Unable to process request!!')
+    else:
+        flash('Request is being processed!!')
+        logout_user()
+        return redirect(url_for('auth.login'))
+    return redirect(url_for('panels.control'))
+
+@bp.route('/cancelgoal', methods=['GET'])
+@login_required
+def cancelgoal():
+    res = robotHDW.cancel_goal()
+    if (res is False):
+        flash('Unable to process request!!')
+    else:
+        flash('Request is being processed!!')
+    return redirect(url_for('panels.control'))
 
 '''WEBSOCKET code'''
 socketio.on_namespace(RobotSpace('/server1'))
