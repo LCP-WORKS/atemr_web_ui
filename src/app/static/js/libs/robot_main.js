@@ -98,7 +98,7 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
             fdbkElement = document.getElementById("idfeedbackVel");
             robot.feedbackSub.subscribe(function(msg){
                 fvel = msg.twist.twist.linear.x * 1000.0;
-                fdbkElement.textContent = (fvel < 0.0) ? 0.0 : fvel.toFixed(2);
+                fdbkElement.textContent = (Math.abs(fvel) > 5.0) ? fvel.toFixed(2) : 0.0;
                 fdbkElementDiv.style.borderColor = (fvel > 200.0) ? 'rgb(233, 63, 57)' : 'rgb(14, 190, 161)';
                 fdbkElementDiv.style.boxShadow = (fvel > 200.0) ? '-6px -6px 1px 4px rgba(233, 63, 57, 0.473) inset' : '-6px -6px 1px 4px rgba(14, 190, 161, 0.473) inset';
             });
