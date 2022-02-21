@@ -21,7 +21,6 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
         $('#idrebootModal').modal({show: false});
         $('#idshutdownModal').modal({show: false});
         document.getElementById("idcancelGoal").style.display = "none";
-        document.getElementById("idinitPosToggle").disabled = true;
         var baseurl = window.location.origin;
         var max_ang_vel = 0.0;
         var max_lin_vel = 0.0;
@@ -60,6 +59,10 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
         }
 
         //CONTROL and MAPPING specific subscribers
+        if (($(location).attr('pathname').substring(1) === 'control'))
+        {
+            document.getElementById("idinitPosToggle").disabled = true;
+        }
         if (($(location).attr('pathname').substring(1) === 'control') || ($(location).attr('pathname').substring(1) === 'mapping')){
             // Current map indicator
             robot.active_map.get(function(data){
