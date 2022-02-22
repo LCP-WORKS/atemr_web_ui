@@ -77,7 +77,7 @@ require(['./ros_connection', './robot_utility'], function(robot, utility){
                 moduleStates = get_bits(msg.hardwareStatus, 8);
                 $('#idsmState').text('SM:' + smstate);
                 ((smstate === 'IDLE') || (smstate === 'ERROR')) ? $('#idmanautoToggle').bootstrapToggle('enable') : $('#idmanautoToggle').bootstrapToggle('disable');
-                if((smstate === 'EXEC')) document.getElementById("idcancelGoal").style.display = "inline-block";
+                if((smstate === 'EXECUTION')) document.getElementById("idcancelGoal").style.display = "inline-block";
                 else document.getElementById("idcancelGoal").style.display = "none";
                 canAutomode = ((msg.hardwareStatus === 255) && (msg.agentStatus >= 54)) ? true : false;
                 for (var i = 0, cell; cell = agent_table.cells[i]; i++) {
